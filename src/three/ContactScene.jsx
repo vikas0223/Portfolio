@@ -27,6 +27,17 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
   const prevIsSubmittingRef = useRef(false);
   const submitTimeRef = useRef(0);
   const prevIsSubmittedRef = useRef(false);
+  const lastStateRef = useRef({
+    phase: '',
+    isSubmitted: false,
+    isSubmitting: false,
+    showCursor: false,
+    progressVal: -1,
+    subText: '',
+    cycle: -1,
+    formDataStr: '',
+    bootStep: 0
+  });
 
   // Create a high-res canvas element and a Three.js texture
   const [canvas, texture] = useMemo(() => {
@@ -77,146 +88,200 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
     // 2. Redraw canvas context
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.fillStyle = '#080a0f'; // darker background for better contrast
-      ctx.fillRect(0, 0, 1024, 768);
-
-      if (phase === 'flash') {
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 380, 1024, 8);
-      } else if (phase === 'static') {
-        const imgData = ctx.createImageData(1024, 768);
-        const d = imgData.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const val = Math.random() > 0.5 ? 255 : 0;
-          d[i] = val * 0.8;
-          d[i+1] = val * 0.75;
-          d[i+2] = val * 0.55;
-          d[i+3] = 45; // slight opacity so background shows
-        }
-        ctx.putImageData(imgData, 0, 0);
-      } else if (phase === 'booting') {
-        const elapsedBoot = elapsed - 0.7;
-        ctx.fillStyle = '#ffd580'; // brighter amber gold
-        ctx.font = 'bold 40px monospace';
-        ctx.fillText('VS WORKSTATION v2.1', 60, 100);
-        ctx.fillText('-----------------------------', 60, 160);
-        ctx.font = '36px monospace';
-        if (elapsedBoot > 0.2) ctx.fillText('SYSTEM INIT... OK', 60, 240);
-        if (elapsedBoot > 0.5) ctx.fillText('RAM CHECK: 640KB OK', 60, 320);
-        if (elapsedBoot > 0.8) ctx.fillText('ESTABLISHING LINK... OK', 60, 400);
-        if (elapsedBoot > 1.1) ctx.fillText('SYSTEM READY.', 60, 480);
-      } else if (phase === 'ready') {
-        // Draw Scanlines
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-        for (let y = 0; y < 768; y += 6) {
-          ctx.fillRect(0, y, 1024, 2);
-        }
-
-        ctx.font = 'bold 44px monospace';
-        ctx.textBaseline = 'top';
-
-        if (isSubmitted) {
-          // Delivered Screen
-          ctx.fillStyle = '#52ff9e'; // bright vivid green
-          ctx.fillText('STATUS: DELIVERED ✓', 60, 100);
-          
-          ctx.fillStyle = '#ffd580';
-          ctx.font = '40px monospace';
-          ctx.fillText('=============================', 60, 170);
-          ctx.fillText('Message delivered.', 60, 260);
-          ctx.fillText('Connection secure.', 60, 350);
-          ctx.fillText('See you soon!', 60, 440);
-          ctx.fillText('-----------------------------', 60, 530);
-          ctx.fillText("Thanks! I'll get back soon.", 60, 620);
-        } else if (isSubmitting) {
-          // Submitting sequences
-          const elapsedSub = t - subStartTimeRef.current;
-          ctx.fillStyle = '#ffd580';
-
-          let subText = 'Initializing...';
-          let progressVal = Math.min(10, Math.floor((elapsedSub / 2.8) * 10));
-          let bar = '█'.repeat(progressVal) + '▒'.repeat(10 - progressVal);
-
-          if (elapsedSub >= 0.7 && elapsedSub < 1.4) {
-            subText = 'Establishing connection...';
-          } else if (elapsedSub >= 1.4 && elapsedSub < 2.1) {
-            subText = 'Encrypting payload...';
-          } else if (elapsedSub >= 2.1) {
-            subText = 'Sending...';
-          }
-
-          ctx.fillText('TRANSMITTING PAYLOAD...', 60, 100);
-          ctx.font = '40px monospace';
-          ctx.fillText('=============================', 60, 170);
-          
-          ctx.fillText(subText, 60, 280);
-          ctx.font = '48px monospace';
-          ctx.fillText(bar, 60, 380);
-          ctx.font = '40px monospace';
-          ctx.fillText(`${Math.round((progressVal / 10) * 100)}% COMPLETE`, 60, 480);
+      const hasInput = !!(formData.name || formData.email || formData.message || formData.company || formData.projectType);
+      
+      const blinkFreq = isHoveringSend ? 4 : 2;
+      const showCursor = phase === 'ready' && !isSubmitted && !isSubmitting && !hasInput && (Math.floor(t * blinkFreq) % 2 === 0);
+      
+      let elapsedSub = 0;
+      let progressVal = -1;
+      let subText = '';
+      if (isSubmitting) {
+        elapsedSub = t - subStartTimeRef.current;
+        progressVal = Math.min(10, Math.floor((elapsedSub / 2.8) * 10));
+        if (elapsedSub >= 0.7 && elapsedSub < 1.4) {
+          subText = 'Establishing connection...';
+        } else if (elapsedSub >= 1.4 && elapsedSub < 2.1) {
+          subText = 'Encrypting payload...';
+        } else if (elapsedSub >= 2.1) {
+          subText = 'Sending...';
         } else {
-          // Normal Idle or Typing
-          const hasInput = formData.name || formData.email || formData.message || formData.company || formData.projectType;
-          
-          if (!hasInput) {
-            // Idle state
-            ctx.fillStyle = '#ffd580';
-            ctx.fillText('VS TERMINAL v2.1', 60, 100);
-            ctx.fillStyle = 'rgba(255, 213, 128, 0.4)';
-            ctx.fillText('=============================', 60, 170);
-
-            ctx.fillStyle = '#ffd580';
-            ctx.fillText('SYSTEM READY', 60, 260);
-            ctx.fillText('Waiting for incoming', 60, 350);
-            ctx.fillText('connection...', 60, 440);
-
-            // Draw cursor
-            const blinkFreq = isHoveringSend ? 4 : 2;
-            const showCursor = Math.floor(t * blinkFreq) % 2 === 0;
-            if (showCursor) {
-              ctx.fillRect(60, 530, 28, 44);
-            }
-          } else {
-            // Typing state
-            ctx.fillStyle = '#ffd580';
-            ctx.fillText('INCOMING CONNECTION...', 60, 100);
-            ctx.font = '36px monospace';
-            ctx.fillText('RECEIVING DATA...', 60, 160);
-
-            // Progress bar based on fields filled
-            let filledCount = 0;
-            if (formData.name) filledCount++;
-            if (formData.email) filledCount++;
-            if (formData.message) filledCount++;
-
-            // Use the cycle background shading formula
-            const total = 10;
-            const targetFilled = Math.round((filledCount / 3) * total);
-            let bar = '█'.repeat(targetFilled);
-            const cycle = Math.floor(t * 5) % (total - targetFilled + 1 || 1);
-            for (let i = 0; i < total - targetFilled; i++) {
-              bar += (i === cycle) ? '█' : '▒';
-            }
-
-            ctx.font = '44px monospace';
-            ctx.fillText(bar, 60, 240);
-
-            // Checklist verification
-            ctx.font = '40px monospace';
-            ctx.fillText('=============================', 60, 320);
-            
-            ctx.fillStyle = formData.name ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
-            ctx.fillText(formData.name ? 'Identity Verified ✓' : 'Authenticating User...', 60, 400);
-
-            ctx.fillStyle = formData.email ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
-            ctx.fillText(formData.email ? 'Connection Established ✓' : 'Securing Connection...', 60, 490);
-
-            ctx.fillStyle = formData.message ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
-            ctx.fillText(formData.message ? 'Secure Channel Open ✓' : 'Opening Payload Channel...', 60, 580);
-          }
+          subText = 'Initializing...';
         }
       }
-      texture.needsUpdate = true;
+
+      let cycle = -1;
+      if (phase === 'ready' && !isSubmitted && !isSubmitting && hasInput) {
+        let filledCount = 0;
+        if (formData.name) filledCount++;
+        if (formData.email) filledCount++;
+        if (formData.message) filledCount++;
+        const total = 10;
+        const targetFilled = Math.round((filledCount / 3) * total);
+        cycle = Math.floor(t * 5) % (total - targetFilled + 1 || 1);
+      }
+
+      let elapsedBoot = 0;
+      let bootStep = 0;
+      if (phase === 'booting') {
+        elapsedBoot = elapsed - 0.7;
+        if (elapsedBoot > 0.2) bootStep++;
+        if (elapsedBoot > 0.5) bootStep++;
+        if (elapsedBoot > 0.8) bootStep++;
+        if (elapsedBoot > 1.1) bootStep++;
+      }
+
+      const formDataStr = JSON.stringify(formData);
+
+      const stateChanged =
+        phase !== lastStateRef.current.phase ||
+        isSubmitted !== lastStateRef.current.isSubmitted ||
+        isSubmitting !== lastStateRef.current.isSubmitting ||
+        showCursor !== lastStateRef.current.showCursor ||
+        progressVal !== lastStateRef.current.progressVal ||
+        subText !== lastStateRef.current.subText ||
+        cycle !== lastStateRef.current.cycle ||
+        formDataStr !== lastStateRef.current.formDataStr ||
+        bootStep !== lastStateRef.current.bootStep ||
+        phase === 'static';
+
+      if (stateChanged) {
+        lastStateRef.current = {
+          phase,
+          isSubmitted,
+          isSubmitting,
+          showCursor,
+          progressVal,
+          subText,
+          cycle,
+          formDataStr,
+          bootStep
+        };
+
+        ctx.fillStyle = '#080a0f'; // darker background for better contrast
+        ctx.fillRect(0, 0, 1024, 768);
+
+        if (phase === 'flash') {
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 380, 1024, 8);
+        } else if (phase === 'static') {
+          const imgData = ctx.createImageData(1024, 768);
+          const d = imgData.data;
+          for (let i = 0; i < d.length; i += 4) {
+            const val = Math.random() > 0.5 ? 255 : 0;
+            d[i] = val * 0.8;
+            d[i+1] = val * 0.75;
+            d[i+2] = val * 0.55;
+            d[i+3] = 45; // slight opacity so background shows
+          }
+          ctx.putImageData(imgData, 0, 0);
+        } else if (phase === 'booting') {
+          ctx.fillStyle = '#ffd580'; // brighter amber gold
+          ctx.font = 'bold 40px monospace';
+          ctx.fillText('VS WORKSTATION v2.1', 60, 100);
+          ctx.fillText('-----------------------------', 60, 160);
+          ctx.font = '36px monospace';
+          if (elapsedBoot > 0.2) ctx.fillText('SYSTEM INIT... OK', 60, 240);
+          if (elapsedBoot > 0.5) ctx.fillText('RAM CHECK: 640KB OK', 60, 320);
+          if (elapsedBoot > 0.8) ctx.fillText('ESTABLISHING LINK... OK', 60, 400);
+          if (elapsedBoot > 1.1) ctx.fillText('SYSTEM READY.', 60, 480);
+        } else if (phase === 'ready') {
+          // Draw Scanlines
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+          for (let y = 0; y < 768; y += 6) {
+            ctx.fillRect(0, y, 1024, 2);
+          }
+
+          ctx.font = 'bold 44px monospace';
+          ctx.textBaseline = 'top';
+
+          if (isSubmitted) {
+            // Delivered Screen
+            ctx.fillStyle = '#52ff9e'; // bright vivid green
+            ctx.fillText('STATUS: DELIVERED ✓', 60, 100);
+            
+            ctx.fillStyle = '#ffd580';
+            ctx.font = '40px monospace';
+            ctx.fillText('=============================', 60, 170);
+            ctx.fillText('Message delivered.', 60, 260);
+            ctx.fillText('Connection secure.', 60, 350);
+            ctx.fillText('See you soon!', 60, 440);
+            ctx.fillText('-----------------------------', 60, 530);
+            ctx.fillText("Thanks! I'll get back soon.", 60, 620);
+          } else if (isSubmitting) {
+            // Submitting sequences
+            ctx.fillStyle = '#ffd580';
+
+            let bar = '█'.repeat(progressVal) + '▒'.repeat(10 - progressVal);
+
+            ctx.fillText('TRANSMITTING PAYLOAD...', 60, 100);
+            ctx.font = '40px monospace';
+            ctx.fillText('=============================', 60, 170);
+            
+            ctx.fillText(subText, 60, 280);
+            ctx.font = '48px monospace';
+            ctx.fillText(bar, 60, 380);
+            ctx.font = '40px monospace';
+            ctx.fillText(`${Math.round((progressVal / 10) * 100)}% COMPLETE`, 60, 480);
+          } else {
+            // Normal Idle or Typing
+            if (!hasInput) {
+              // Idle state
+              ctx.fillStyle = '#ffd580';
+              ctx.fillText('VS TERMINAL v2.1', 60, 100);
+              ctx.fillStyle = 'rgba(255, 213, 128, 0.4)';
+              ctx.fillText('=============================', 60, 170);
+
+              ctx.fillStyle = '#ffd580';
+              ctx.fillText('SYSTEM READY', 60, 260);
+              ctx.fillText('Waiting for incoming', 60, 350);
+              ctx.fillText('connection...', 60, 440);
+
+              // Draw cursor
+              if (showCursor) {
+                ctx.fillRect(60, 530, 28, 44);
+              }
+            } else {
+              // Typing state
+              ctx.fillStyle = '#ffd580';
+              ctx.fillText('INCOMING CONNECTION...', 60, 100);
+              ctx.font = '36px monospace';
+              ctx.fillText('RECEIVING DATA...', 60, 160);
+
+              // Progress bar based on fields filled
+              let filledCount = 0;
+              if (formData.name) filledCount++;
+              if (formData.email) filledCount++;
+              if (formData.message) filledCount++;
+
+              // Use the cycle background shading formula
+              const total = 10;
+              const targetFilled = Math.round((filledCount / 3) * total);
+              let bar = '█'.repeat(targetFilled);
+              for (let i = 0; i < total - targetFilled; i++) {
+                bar += (i === cycle) ? '█' : '▒';
+              }
+
+              ctx.font = '44px monospace';
+              ctx.fillText(bar, 60, 240);
+
+              // Checklist verification
+              ctx.font = '40px monospace';
+              ctx.fillText('=============================', 60, 320);
+              
+              ctx.fillStyle = formData.name ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
+              ctx.fillText(formData.name ? 'Identity Verified ✓' : 'Authenticating User...', 60, 400);
+
+              ctx.fillStyle = formData.email ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
+              ctx.fillText(formData.email ? 'Connection Established ✓' : 'Securing Connection...', 60, 490);
+
+              ctx.fillStyle = formData.message ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
+              ctx.fillText(formData.message ? 'Secure Channel Open ✓' : 'Opening Payload Channel...', 60, 580);
+            }
+          }
+        }
+        texture.needsUpdate = true;
+      }
     }
 
     // 3. Emissive intensity control (breathing + flicker + mouse distance)
@@ -270,8 +335,12 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
         <planeGeometry args={[0.78, 0.58]} />
         <meshStandardMaterial
           ref={screenMatRef}
+          color="#000000"
+          roughness={0.25}
+          metalness={0.1}
           map={texture}
-          emissive={C.screenGlow}
+          emissive="#ffffff"
+          emissiveMap={texture}
           emissiveIntensity={0.6}
           toneMapped={false}
         />
@@ -374,9 +443,9 @@ function Mouse({ position = [0, 0, 0] }) {
 }
 
 /* ── Office Chair ── */
-function OfficeChair({ position = [0, 0, 0] }) {
+function OfficeChair({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   return (
-    <group position={position}>
+    <group position={position} rotation={rotation}>
       {/* Seat */}
       <RoundedBox args={[0.7, 0.08, 0.65]} radius={0.03} smoothness={4} position={[0, 0.65, 0]}>
         <meshStandardMaterial color={C.chairCush} roughness={0.8} metalness={0.0} />
@@ -489,21 +558,21 @@ function DeskScene({ formData, isSubmitting, isSubmitted, isHoveringSend, inView
       </mesh>
 
       {/* ── Items on desk ── */}
-      <Tower position={[-1.0, 1.04, -0.1]} />
+      <Tower position={[-1.0, 1.04, -0.2]} />
       <CRTMonitor 
-        position={[0.0, 1.04, -0.15]} 
+        position={[0.0, 1.04, -0.25]} 
         formData={formData} 
         isSubmitting={isSubmitting} 
         isSubmitted={isSubmitted} 
         isHoveringSend={isHoveringSend}
         inView={inView}
       />
-      <Keyboard position={[0.0, 1.04, 0.3]} />
-      <Mouse position={[0.7, 1.04, 0.3]} />
+      <Keyboard position={[0.0, 1.04, 0.41]} />
+      <Mouse position={[0.7, 1.04, 0.41]} />
       <DeskItems position={[-0.5, 1.04, 0.15]} />
 
       {/* ── Chair ── */}
-      <OfficeChair position={[0, 0, 1.3]} />
+      <OfficeChair position={[0, 0, 1.25]} rotation={[0, Math.PI, 0]} />
     </group>
   );
 }

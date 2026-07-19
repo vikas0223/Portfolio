@@ -60,16 +60,16 @@ export default function Contact() {
       const ctx = audioCtxRef.current;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      
+
       osc.type = 'sine';
       osc.frequency.setValueAtTime(800 + Math.random() * 600, ctx.currentTime);
-      
+
       gain.gain.setValueAtTime(0.015, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
-      
+
       osc.connect(gain);
       gain.connect(ctx.destination);
-      
+
       osc.start();
       osc.stop(ctx.currentTime + 0.04);
     } catch (e) {
@@ -106,9 +106,9 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    
+
     setIsSubmitting(true);
-    
+
     // Simulate connection encryption and transmission payload sending
     setTimeout(() => {
       setIsSubmitting(false);
@@ -170,25 +170,25 @@ export default function Contact() {
         stagger: 0.1,
         ease: 'power3.out'
       })
-      .to(modelContainer, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.7,
-        ease: 'power3.out'
-      }, '-=0.45')
-      .to(card, {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'back.out(1.2)'
-      }, '-=0.3')
-      .to(quote, {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: 'power2.out'
-      }, '-=0.2');
+        .to(modelContainer, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.7,
+          ease: 'power3.out'
+        }, '-=0.45')
+        .to(card, {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'back.out(1.2)'
+        }, '-=0.3')
+        .to(quote, {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          ease: 'power2.out'
+        }, '-=0.2');
     }, el);
 
     return () => {
@@ -200,22 +200,22 @@ export default function Contact() {
   return (
     <section ref={containerRef} id="contact" className="bg-d0 border-t border-border py-16 lg:py-0 lg:min-h-screen pt-[100px] pb-12 px-7 md:px-[72px] flex flex-col justify-center relative">
       <SectionGlow />
-      
+
       <div className="w-full max-w-[1260px] mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-center justify-between relative z-10">
-        
+
         {/* Left side: Heading & Simplified Form */}
         <div className="w-full lg:w-[45%] flex flex-col justify-center">
           <p className="slabel contact-reveal-item mb-1">Get in Touch</p>
           <h2 className="ct-ti contact-reveal-item text-[clamp(1.8rem,3vw,2.8rem)] font-serif font-light leading-tight tracking-tight mb-2">
             Let's create <span className="text-gold italic font-normal">something extraordinary</span>.
           </h2>
-          
+
           <p className="contact-reveal-item text-t-mid text-[0.86rem] leading-relaxed max-w-[390px] mb-4">
             Have a project in mind or just want to say hello? I'd love to hear from you.
           </p>
 
           <form onSubmit={handleSubmit} className="contact-reveal-item w-full max-w-[480px] flex flex-col gap-3">
-            
+
             {/* Name and Email side-by-side */}
             <div className="flex gap-4">
               <div className="flex-1 flex flex-col gap-1">
@@ -252,7 +252,7 @@ export default function Contact() {
             {/* Project Type Dropdown */}
             <div className="flex flex-col gap-1 relative" ref={dropdownRef}>
               <label className="text-[0.58rem] font-mono tracking-[0.2em] uppercase text-t-lo/70">Project Type</label>
-              
+
               <button
                 type="button"
                 disabled={isSubmitting || isSubmitted}
@@ -335,13 +335,12 @@ export default function Contact() {
                 disabled={isSubmitting || isSubmitted}
                 onMouseEnter={() => setIsHoveringSend(true)}
                 onMouseLeave={() => setIsHoveringSend(false)}
-                className={`group relative flex items-center justify-center gap-3 w-full py-2.5 text-d0 rounded-xl font-medium tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(201,169,110,0.25)] cursor-none text-[0.85rem] ${
-                  isSubmitted
+                className={`group relative flex items-center justify-center gap-3 w-full py-2.5 text-d0 rounded-xl font-medium tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(201,169,110,0.25)] cursor-none text-[0.85rem] ${isSubmitted
                     ? 'bg-gold text-d0 opacity-90'
                     : isSubmitting
-                    ? 'shimmer-btn text-d0'
-                    : 'bg-gold hover:bg-[#d4b47a]'
-                }`}
+                      ? 'shimmer-btn text-d0'
+                      : 'bg-gold hover:bg-[#d4b47a]'
+                  }`}
               >
                 {isSubmitted ? (
                   <span>✓ Message Sent</span>
@@ -365,7 +364,7 @@ export default function Contact() {
                     Send another message
                   </button>
                 ) : <div />}
-                
+
                 <button
                   type="button"
                   onClick={() => setSoundEnabled(!soundEnabled)}
@@ -390,7 +389,7 @@ export default function Contact() {
 
         {/* Right side: 3D Model with Floating Info Card & Quote */}
         <div className="w-full lg:w-[50%] flex flex-col relative items-center justify-center lg:mt-0 mt-8">
-          
+
           {/* Floating Contact Info Card */}
           <div className="contact-reveal-card absolute top-2 right-2 lg:top-4 lg:right-4 z-10 bg-d2 border border-border/80 rounded-2xl p-4 shadow-[0_8px_30px_rgba(201,169,110,0.06)] max-w-[230px] w-full flex flex-col gap-2.5">
             <div className="flex items-center gap-2">
@@ -400,9 +399,9 @@ export default function Contact() {
               </span>
               <span className="text-[0.7rem] text-t-hi font-medium uppercase tracking-wider font-mono">Available</span>
             </div>
-            
+
             <div className="h-px bg-white/5 my-0.5"></div>
-            
+
             <div className="flex flex-col gap-2">
               <div>
                 <p className="text-[0.55rem] font-mono tracking-wider uppercase text-t-lo">Location</p>
@@ -421,10 +420,10 @@ export default function Contact() {
 
           {/* Retro Computer 3D Model */}
           <div id="contact-3d-container" className="w-full lg:w-[90%] h-[350px] lg:h-[450px] relative z-0 flex items-center justify-center bg-transparent">
-            <ContactModel 
-              formData={formData} 
-              isSubmitting={isSubmitting} 
-              isSubmitted={isSubmitted} 
+            <ContactModel
+              formData={formData}
+              isSubmitting={isSubmitting}
+              isSubmitted={isSubmitted}
               isHoveringSend={isHoveringSend}
               inView={inView}
             />

@@ -34,7 +34,7 @@ export default function About() {
       >{words[index]}</span></em></h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[76px] items-start">
         <p className="bio" data-r="l" data-d="1">
-          <strong className="text-t-hi font-medium">Computer Science &amp; Engineering graduate</strong> (specializing in AI &amp; ML) from Chandigarh University with a CGPA of 7.63. I focus on creating interfaces that bridge complex system engineering and intuitive user experiences.<br /><br />
+          <strong className="text-t-hi font-medium">Computer Science &amp; Engineering graduate</strong> (specializing in AI &amp; ML) from Chandigarh University. I focus on creating interfaces that bridge complex system engineering and intuitive user experiences.<br /><br />
           My engineering background gives me an edge when collaborating with developers on technically complex interfaces, translating functional requirements into performant visuals. Currently seeking a <strong className="text-t-hi font-medium">UI/UX or Product Designer role</strong> to help build products that feel effortless to use.
         </p>
 
