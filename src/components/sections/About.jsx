@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import SectionGlow from './SectionGlow';
-import profileImg from '../assets/profile-removebg-preview.png';
+import SectionGlow from '../ui/SectionGlow';
+import profileImg from '../../assets/images/profile-removebg-preview.png';
+import { AboutDoodles } from '../ui/DesignerDoodles';
+import { siteConfig } from '../../config/siteConfig';
 
 export default function About() {
   const words = ["intention", "purpose", "intent", "clarity"]
@@ -32,8 +34,8 @@ export default function About() {
       >{words[index]}</span></em></h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[76px] items-start">
         <p className="bio" data-r="l" data-d="1">
-          Final year <strong className="text-t-hi font-medium">Computer Science student at Chandigarh University</strong> (AI &amp; ML), with a deep interest in how people interact with digital products. I work across the full design process — from early research and sketching to polished, high-fidelity prototypes.<br /><br />
-          My engineering background gives me an edge when collaborating with developers on technically complex interfaces. Currently seeking a <strong className="text-t-hi font-medium">UI/UX or Product Designer role</strong> to help build products that feel effortless to use.
+          <strong className="text-t-hi font-medium">Computer Science &amp; Engineering graduate</strong> (specializing in AI &amp; ML) from Chandigarh University with a CGPA of 7.63. I focus on creating interfaces that bridge complex system engineering and intuitive user experiences.<br /><br />
+          My engineering background gives me an edge when collaborating with developers on technically complex interfaces, translating functional requirements into performant visuals. Currently seeking a <strong className="text-t-hi font-medium">UI/UX or Product Designer role</strong> to help build products that feel effortless to use.
         </p>
 
         {/* Right side profile image */}
@@ -42,17 +44,21 @@ export default function About() {
           data-r="r"
           data-d="2"
         >
-          <img
-            src={profileImg}
-            alt="Profile"
-            className="transition-transform duration-700 hover:scale-105"
-            style={{
-              maxHeight: '480px',
-              width: 'auto',
-              objectFit: 'contain',
-              objectPosition: 'top'
-            }}
-          />
+          <div className="relative inline-block select-none group">
+            <img
+              src={profileImg}
+              alt="Profile"
+              className="transition-transform duration-700 hover:scale-105"
+              style={{
+                maxHeight: '480px',
+                width: 'auto',
+                objectFit: 'contain',
+                objectPosition: 'top'
+              }}
+            />
+            {/* Figma-style inspector design annotations */}
+            <AboutDoodles />
+          </div>
         </div>
       </div>
     </section>

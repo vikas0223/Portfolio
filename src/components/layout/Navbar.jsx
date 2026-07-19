@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import resumePdf from '../resume/Resume 2.pdf'; // Assuming this resolves correctly in Vite
+import resumePdf from '../../resume/Resume 2.pdf'; // Assuming this resolves correctly in Vite
+import { siteConfig } from '../../config/siteConfig';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -70,7 +71,7 @@ export default function Navbar() {
         {/* LEFT: Logo */}
         <div className="flex-1 flex justify-start">
           <a href="#hero" className="font-serif text-[1.3rem] tracking-[.01em] text-t-hi no-underline hover:opacity-70 transition-opacity">
-            Vikas Singh
+            {siteConfig.name}
           </a>
         </div>
 
@@ -186,7 +187,7 @@ export default function Navbar() {
 
           <p className="font-mono text-[0.7rem] tracking-[0.25em] text-gold uppercase mb-4">Curriculum Vitae</p>
           <h2 className="font-serif text-[2.5rem] md:text-[3.2rem] text-t-hi font-light mb-8 text-center leading-tight">
-            Vikas Singh
+            {siteConfig.name}
           </h2>
 
           <div className="flex flex-col sm:flex-row gap-5 w-full max-w-[500px]">

@@ -20,56 +20,237 @@ const C = {
 };
 
 /* ── CRT Monitor ── */
-function CRTMonitor({ position = [0, 0, 0] }) {
+function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false, isSubmitted = false, isHoveringSend = false, inView = false }) {
   const screenMatRef = useRef();
+  const bootTimeRef = useRef(-1);
+  const subStartTimeRef = useRef(0);
+  const prevIsSubmittingRef = useRef(false);
+  const submitTimeRef = useRef(0);
+  const prevIsSubmittedRef = useRef(false);
 
-  // Code editor screen texture
-  const screenTexture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 200;
-    const ctx = canvas.getContext('2d');
-
-    // Dark background
-    ctx.fillStyle = '#0a0e14';
-    ctx.fillRect(0, 0, 256, 200);
-
-    // Scanline effect
-    for (let y = 0; y < 200; y += 2) {
-      ctx.fillStyle = 'rgba(0,0,0,0.15)';
-      ctx.fillRect(0, y, 256, 1);
-    }
-
-    // Code lines with warm gold/amber tones
-    const colors = ['#c9a96e', '#e8c88a', '#a89060', '#d4b87a', '#8b7340', '#c9a96e'];
-    const widths = [100, 70, 120, 50, 90, 60, 110, 80, 130, 45, 75, 100, 55, 95];
-    for (let i = 0; i < 14; i++) {
-      const y = 15 + i * 12;
-      const indent = (i % 4 === 0) ? 10 : (i % 3 === 0) ? 25 : (i % 2 === 0) ? 40 : 15;
-      ctx.fillStyle = colors[i % colors.length];
-      ctx.globalAlpha = 0.6 + Math.random() * 0.3;
-      ctx.fillRect(indent, y, widths[i], 5);
-      if (i % 3 === 0) {
-        ctx.fillStyle = colors[(i + 3) % colors.length];
-        ctx.globalAlpha = 0.4;
-        ctx.fillRect(indent + widths[i] + 6, y, 35, 5);
-      }
-    }
-    ctx.globalAlpha = 1;
-
-    // Cursor
-    ctx.fillStyle = '#c9a96e';
-    ctx.fillRect(25, 75, 1.5, 10);
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.needsUpdate = true;
-    return tex;
+  // Create a high-res canvas element and a Three.js texture
+  const [canvas, texture] = useMemo(() => {
+    const c = document.createElement('canvas');
+    c.width = 1024;
+    c.height = 768;
+    const t = new THREE.CanvasTexture(c);
+    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.magFilter = THREE.LinearFilter;
+    t.generateMipmaps = true;
+    t.anisotropy = 16; // Maximum crispness at angles
+    t.wrapS = THREE.ClampToEdgeWrapping;
+    t.wrapT = THREE.ClampToEdgeWrapping;
+    return [c, t];
   }, []);
 
   useFrame((state) => {
-    if (screenMatRef.current) {
-      const t = state.clock.getElapsedTime();
-      screenMatRef.current.emissiveIntensity = 0.6 + Math.sin(t * 1.5) * 0.1;
+    if (!screenMatRef.current) return;
+    const t = state.clock.getElapsedTime();
+
+    // Reset submission start time when not submitting
+    if (!isSubmitting) {
+      subStartTimeRef.current = 0;
+    } else if (isSubmitting && !prevIsSubmittingRef.current) {
+      subStartTimeRef.current = t;
+    }
+    prevIsSubmittingRef.current = isSubmitting;
+
+    if (isSubmitted && !prevIsSubmittedRef.current) {
+      submitTimeRef.current = t;
+    }
+    prevIsSubmittedRef.current = isSubmitted;
+
+    // 1. Calculate boot phases
+    let phase = 'off';
+    let elapsed = 0;
+    if (inView) {
+      if (bootTimeRef.current === -1) {
+        bootTimeRef.current = t;
+      }
+      elapsed = t - bootTimeRef.current;
+      if (elapsed < 0.15) phase = 'flash';
+      else if (elapsed < 0.7) phase = 'static';
+      else if (elapsed < 2.2) phase = 'booting';
+      else phase = 'ready';
+    }
+
+    // 2. Redraw canvas context
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#080a0f'; // darker background for better contrast
+      ctx.fillRect(0, 0, 1024, 768);
+
+      if (phase === 'flash') {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 380, 1024, 8);
+      } else if (phase === 'static') {
+        const imgData = ctx.createImageData(1024, 768);
+        const d = imgData.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const val = Math.random() > 0.5 ? 255 : 0;
+          d[i] = val * 0.8;
+          d[i+1] = val * 0.75;
+          d[i+2] = val * 0.55;
+          d[i+3] = 45; // slight opacity so background shows
+        }
+        ctx.putImageData(imgData, 0, 0);
+      } else if (phase === 'booting') {
+        const elapsedBoot = elapsed - 0.7;
+        ctx.fillStyle = '#ffd580'; // brighter amber gold
+        ctx.font = 'bold 40px monospace';
+        ctx.fillText('VS WORKSTATION v2.1', 60, 100);
+        ctx.fillText('-----------------------------', 60, 160);
+        ctx.font = '36px monospace';
+        if (elapsedBoot > 0.2) ctx.fillText('SYSTEM INIT... OK', 60, 240);
+        if (elapsedBoot > 0.5) ctx.fillText('RAM CHECK: 640KB OK', 60, 320);
+        if (elapsedBoot > 0.8) ctx.fillText('ESTABLISHING LINK... OK', 60, 400);
+        if (elapsedBoot > 1.1) ctx.fillText('SYSTEM READY.', 60, 480);
+      } else if (phase === 'ready') {
+        // Draw Scanlines
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+        for (let y = 0; y < 768; y += 6) {
+          ctx.fillRect(0, y, 1024, 2);
+        }
+
+        ctx.font = 'bold 44px monospace';
+        ctx.textBaseline = 'top';
+
+        if (isSubmitted) {
+          // Delivered Screen
+          ctx.fillStyle = '#52ff9e'; // bright vivid green
+          ctx.fillText('STATUS: DELIVERED ✓', 60, 100);
+          
+          ctx.fillStyle = '#ffd580';
+          ctx.font = '40px monospace';
+          ctx.fillText('=============================', 60, 170);
+          ctx.fillText('Message delivered.', 60, 260);
+          ctx.fillText('Connection secure.', 60, 350);
+          ctx.fillText('See you soon!', 60, 440);
+          ctx.fillText('-----------------------------', 60, 530);
+          ctx.fillText("Thanks! I'll get back soon.", 60, 620);
+        } else if (isSubmitting) {
+          // Submitting sequences
+          const elapsedSub = t - subStartTimeRef.current;
+          ctx.fillStyle = '#ffd580';
+
+          let subText = 'Initializing...';
+          let progressVal = Math.min(10, Math.floor((elapsedSub / 2.8) * 10));
+          let bar = '█'.repeat(progressVal) + '▒'.repeat(10 - progressVal);
+
+          if (elapsedSub >= 0.7 && elapsedSub < 1.4) {
+            subText = 'Establishing connection...';
+          } else if (elapsedSub >= 1.4 && elapsedSub < 2.1) {
+            subText = 'Encrypting payload...';
+          } else if (elapsedSub >= 2.1) {
+            subText = 'Sending...';
+          }
+
+          ctx.fillText('TRANSMITTING PAYLOAD...', 60, 100);
+          ctx.font = '40px monospace';
+          ctx.fillText('=============================', 60, 170);
+          
+          ctx.fillText(subText, 60, 280);
+          ctx.font = '48px monospace';
+          ctx.fillText(bar, 60, 380);
+          ctx.font = '40px monospace';
+          ctx.fillText(`${Math.round((progressVal / 10) * 100)}% COMPLETE`, 60, 480);
+        } else {
+          // Normal Idle or Typing
+          const hasInput = formData.name || formData.email || formData.message || formData.company || formData.projectType;
+          
+          if (!hasInput) {
+            // Idle state
+            ctx.fillStyle = '#ffd580';
+            ctx.fillText('VS TERMINAL v2.1', 60, 100);
+            ctx.fillStyle = 'rgba(255, 213, 128, 0.4)';
+            ctx.fillText('=============================', 60, 170);
+
+            ctx.fillStyle = '#ffd580';
+            ctx.fillText('SYSTEM READY', 60, 260);
+            ctx.fillText('Waiting for incoming', 60, 350);
+            ctx.fillText('connection...', 60, 440);
+
+            // Draw cursor
+            const blinkFreq = isHoveringSend ? 4 : 2;
+            const showCursor = Math.floor(t * blinkFreq) % 2 === 0;
+            if (showCursor) {
+              ctx.fillRect(60, 530, 28, 44);
+            }
+          } else {
+            // Typing state
+            ctx.fillStyle = '#ffd580';
+            ctx.fillText('INCOMING CONNECTION...', 60, 100);
+            ctx.font = '36px monospace';
+            ctx.fillText('RECEIVING DATA...', 60, 160);
+
+            // Progress bar based on fields filled
+            let filledCount = 0;
+            if (formData.name) filledCount++;
+            if (formData.email) filledCount++;
+            if (formData.message) filledCount++;
+
+            // Use the cycle background shading formula
+            const total = 10;
+            const targetFilled = Math.round((filledCount / 3) * total);
+            let bar = '█'.repeat(targetFilled);
+            const cycle = Math.floor(t * 5) % (total - targetFilled + 1 || 1);
+            for (let i = 0; i < total - targetFilled; i++) {
+              bar += (i === cycle) ? '█' : '▒';
+            }
+
+            ctx.font = '44px monospace';
+            ctx.fillText(bar, 60, 240);
+
+            // Checklist verification
+            ctx.font = '40px monospace';
+            ctx.fillText('=============================', 60, 320);
+            
+            ctx.fillStyle = formData.name ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
+            ctx.fillText(formData.name ? 'Identity Verified ✓' : 'Authenticating User...', 60, 400);
+
+            ctx.fillStyle = formData.email ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
+            ctx.fillText(formData.email ? 'Connection Established ✓' : 'Securing Connection...', 60, 490);
+
+            ctx.fillStyle = formData.message ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
+            ctx.fillText(formData.message ? 'Secure Channel Open ✓' : 'Opening Payload Channel...', 60, 580);
+          }
+        }
+      }
+      texture.needsUpdate = true;
+    }
+
+    // 3. Emissive intensity control (breathing + flicker + mouse distance)
+    if (phase === 'off') {
+      screenMatRef.current.emissiveIntensity = 0;
+    } else {
+      let baseIntensity = 0.65 + Math.sin(t * 2) * 0.08;
+
+      // Tiny random flicker
+      if (Math.random() > 0.985) {
+        baseIntensity -= 0.2;
+      } else if (Math.random() > 0.97) {
+        baseIntensity += 0.06;
+      }
+
+      // Mouse distance proximity
+      const dist = Math.sqrt(state.pointer.x * state.pointer.x + state.pointer.y * state.pointer.y);
+      const proximityIntensity = Math.max(0, 1.0 - dist) * 0.12;
+
+      // Send hover brightness lift
+      const hoverIntensity = isHoveringSend ? 0.08 : 0;
+
+      // Success screen pulse & dimming
+      let pulseDim = 1.0;
+      if (isSubmitted) {
+        const elapsedSubmit = t - submitTimeRef.current;
+        if (elapsedSubmit > 0 && elapsedSubmit < 0.5) {
+          pulseDim = 1.6 - (elapsedSubmit / 0.5) * 0.8;
+        } else {
+          pulseDim = 0.75;
+        }
+      }
+
+      screenMatRef.current.emissiveIntensity = (baseIntensity + proximityIntensity + hoverIntensity) * pulseDim;
     }
   });
 
@@ -89,7 +270,7 @@ function CRTMonitor({ position = [0, 0, 0] }) {
         <planeGeometry args={[0.78, 0.58]} />
         <meshStandardMaterial
           ref={screenMatRef}
-          map={screenTexture}
+          map={texture}
           emissive={C.screenGlow}
           emissiveIntensity={0.6}
           toneMapped={false}
@@ -126,7 +307,7 @@ function Tower({ position = [0, 0, 0] }) {
         <boxGeometry args={[0.01, 0.04, 0.28]} />
         <meshStandardMaterial color={C.beigeDark} roughness={0.4} />
       </mesh>
-      {/* CD drive slot */}
+      {/* CD CD drive slot */}
       <mesh position={[0.178, 0.6, 0]}>
         <boxGeometry args={[0.01, 0.06, 0.3]} />
         <meshStandardMaterial color={C.beigeDark} roughness={0.4} />
@@ -153,7 +334,7 @@ function Keyboard({ position = [0, 0, 0] }) {
       <RoundedBox args={[1.0, 0.04, 0.35]} radius={0.01} smoothness={4} position={[0, 0.02, 0]}>
         <meshStandardMaterial color={C.keyboard} roughness={0.5} metalness={0.05} />
       </RoundedBox>
-      {/* Key rows */}
+      {/* Key Key rows */}
       {Array.from({ length: 4 }).map((_, row) =>
         Array.from({ length: 12 }).map((_, col) => (
           <mesh key={`k-${row}-${col}`} position={[-0.42 + col * 0.072, 0.045, -0.11 + row * 0.07]}>
@@ -216,7 +397,7 @@ function OfficeChair({ position = [0, 0, 0] }) {
             <cylinderGeometry args={[0.02, 0.02, 0.22, 8]} />
             <meshStandardMaterial color={C.chair} roughness={0.3} metalness={0.4} />
           </mesh>
-          {/* Armrest pad */}
+          {/* Armrest armrest pad */}
           <RoundedBox args={[0.06, 0.03, 0.25]} radius={0.01} smoothness={4} position={[x, 0.9, 0]}>
             <meshStandardMaterial color={C.chairCush} roughness={0.7} />
           </RoundedBox>
@@ -227,7 +408,7 @@ function OfficeChair({ position = [0, 0, 0] }) {
         <cylinderGeometry args={[0.04, 0.04, 0.55, 8]} />
         <meshStandardMaterial color="#333" roughness={0.3} metalness={0.6} />
       </mesh>
-      {/* Star base — 5 legs */}
+      {/* Star star base — 5 legs */}
       {[0, 1, 2, 3, 4].map((i) => {
         const angle = (i * Math.PI * 2) / 5;
         const x = Math.sin(angle) * 0.32;
@@ -280,7 +461,7 @@ function DeskItems({ position = [0, 0, 0] }) {
 }
 
 /* ── Full Desk Scene ── */
-function DeskScene() {
+function DeskScene({ formData, isSubmitting, isSubmitted, isHoveringSend, inView }) {
   return (
     <group>
       {/* ── Desk ── */}
@@ -288,13 +469,13 @@ function DeskScene() {
       <RoundedBox args={[3.0, 0.08, 1.2]} radius={0.02} smoothness={4} position={[0, 1.0, 0]}>
         <meshStandardMaterial color={C.deskWood} roughness={0.55} metalness={0.05} />
       </RoundedBox>
-      {/* Front edge trim */}
+      {/* Front edge edge trim */}
       <mesh position={[0, 0.94, 0.6]}>
         <boxGeometry args={[3.0, 0.04, 0.02]} />
         <meshStandardMaterial color={C.deskEdge} roughness={0.5} />
       </mesh>
 
-      {/* Desk legs — angled like the reference */}
+      {/* Desk legs — angled */}
       {[[-1.3, -0.45], [1.3, -0.45], [-1.3, 0.45], [1.3, 0.45]].map(([x, z], i) => (
         <mesh key={`dleg-${i}`} position={[x, 0.48, z]}>
           <boxGeometry args={[0.06, 0.96, 0.06]} />
@@ -309,7 +490,14 @@ function DeskScene() {
 
       {/* ── Items on desk ── */}
       <Tower position={[-1.0, 1.04, -0.1]} />
-      <CRTMonitor position={[0.0, 1.04, -0.15]} />
+      <CRTMonitor 
+        position={[0.0, 1.04, -0.15]} 
+        formData={formData} 
+        isSubmitting={isSubmitting} 
+        isSubmitted={isSubmitted} 
+        isHoveringSend={isHoveringSend}
+        inView={inView}
+      />
       <Keyboard position={[0.0, 1.04, 0.3]} />
       <Mouse position={[0.7, 1.04, 0.3]} />
       <DeskItems position={[-0.5, 1.04, 0.15]} />
@@ -321,7 +509,7 @@ function DeskScene() {
 }
 
 /* ── Scene Controller (mouse interaction) ── */
-function SceneController() {
+function SceneController({ formData, isSubmitting, isSubmitted, isHoveringSend, inView }) {
   const { camera } = useThree();
   const groupRef = useRef();
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -354,7 +542,7 @@ function SceneController() {
     };
   }, [camera, isMobile]);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (!groupRef.current || isMobile) return;
 
     const damping = 4;
@@ -373,7 +561,13 @@ function SceneController() {
   return (
     <group ref={groupRef} rotation={[0, -0.4, 0]}>
       <Float speed={0.8} rotationIntensity={0.02} floatIntensity={0.04}>
-        <DeskScene />
+        <DeskScene 
+          formData={formData} 
+          isSubmitting={isSubmitting} 
+          isSubmitted={isSubmitted} 
+          isHoveringSend={isHoveringSend}
+          inView={inView}
+        />
         {/* Screen glow bounce light */}
         <pointLight position={[0, 1.8, 0.5]} intensity={0.4} color={C.screenGlow} distance={3} decay={2} />
       </Float>
@@ -382,10 +576,10 @@ function SceneController() {
 }
 
 /* ── Exported Canvas wrapper ── */
-export default function ContactModel() {
+export default function ContactModel({ formData, isSubmitting, isSubmitted, isHoveringSend, inView }) {
   return (
     <Canvas
-      camera={{ position: [4, 3.5, 5], fov: 38 }}
+      camera={{ position: [3.1, 2.7, 4.0], fov: 31 }}
       dpr={[1, 1.5]}
       gl={{
         antialias: true,
@@ -419,7 +613,13 @@ export default function ContactModel() {
       <Environment preset="night" environmentIntensity={0.1} />
 
       <React.Suspense fallback={null}>
-        <SceneController />
+        <SceneController 
+          formData={formData} 
+          isSubmitting={isSubmitting} 
+          isSubmitted={isSubmitted} 
+          isHoveringSend={isHoveringSend}
+          inView={inView}
+        />
         <ContactShadows position={[0, -0.05, 0]} opacity={0.4} scale={8} blur={2.5} far={4} color="#000000" />
       </React.Suspense>
     </Canvas>

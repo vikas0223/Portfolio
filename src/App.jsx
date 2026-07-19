@@ -1,19 +1,29 @@
-import React, { useEffect } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Marquee from './components/Marquee';
-import About from './components/About';
-import Projects from './components/Projects';
-import UsualSuspects from './components/UsualSuspects';
-import Education from './components/Education';
-import Contact from './components/Contact';
-import CustomCursor from './components/CustomCursor';
+import React, { useEffect, useState } from 'react';
+import Navbar from './components/layout/Navbar';
+import Hero from './components/sections/Hero';
+import Marquee from './components/ui/Marquee';
+import About from './components/sections/About';
+import Projects from './components/sections/Projects';
+import UsualSuspects from './components/sections/UsualSuspects';
+import Education from './components/sections/Education';
+import Contact from './components/sections/Contact';
+import CustomCursor from './components/ui/CustomCursor';
+import Footer from './components/layout/Footer';
+import Preloader from './components/preloader/Preloader';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
+  const [loading, setLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const visited = sessionStorage.getItem('portfolio-visited');
+      return visited ? false : true;
+    }
+    return true;
+  });
+
   // Scroll reveal for [data-r] elements — matching original HTML logic
   useEffect(() => {
     const delayMap = { '1': 0.06, '2': 0.13, '3': 0.20, '4': 0.27, '5': 0.34 };
@@ -69,6 +79,7 @@ function App() {
 
   return (
     <>
+      {loading && <Preloader onComplete={() => setLoading(false)} />}
       <CustomCursor />
       <Navbar />
       <main>
@@ -80,6 +91,7 @@ function App() {
         <Education />
         <Contact />
       </main>
+      <Footer />
     </>
   );
 }

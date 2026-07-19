@@ -3,9 +3,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
+import roomModelUrl from '../assets/models/optimized-room.glb';
+
 /* ── Room Scene (inner Three.js component) ── */
 function RoomScene({ rotTarget }) {
-  const gltf = useGLTF('/optimized-room.glb');
+  const gltf = useGLTF(roomModelUrl);
   const groupRef = useRef();
 
   /* Enhance materials — emissive screens + shadow setup */
@@ -114,4 +116,4 @@ export default function RoomModel({ rotTarget }) {
   );
 }
 
-useGLTF.preload('/optimized-room.glb');
+useGLTF.preload(roomModelUrl);

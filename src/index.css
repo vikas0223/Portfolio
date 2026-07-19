@@ -1036,3 +1036,75 @@ summary,
     will-change: auto;
   }
 }
+
+/* ══ PRELOADER LOCK OVERRIDES ══ */
+body.preloading {
+  overflow: hidden !important;
+}
+
+body.preloading,
+body.preloading * {
+  cursor: default !important;
+}
+
+body.preloading button,
+body.preloading a,
+body.preloading [role="button"] {
+  cursor: pointer !important;
+}
+
+body.preloading #cdot,
+body.preloading #cring {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Disable default CSS animations during preloader */
+body.preloading .hl {
+  animation: none !important;
+  opacity: 0;
+}
+
+body.preloading .hero-sub {
+  animation: none !important;
+  opacity: 0;
+}
+
+body.preloading #hero-cta {
+  animation: none !important;
+  opacity: 0;
+}
+
+body.preloading .sline {
+  animation: none !important;
+  opacity: 0;
+}
+
+body.preloading .sline + span {
+  opacity: 0;
+}
+
+body.preloading #hero-3d-container {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+body.preloading #nav {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* ══ CONTACT CTA SHIMMER ══ */
+@keyframes btn-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.shimmer-btn {
+  background: linear-gradient(90deg, #c9a96e 25%, #e8c88a 50%, #c9a96e 75%);
+  background-size: 200% 100%;
+  animation: btn-shimmer 1.5s infinite linear;
+}

@@ -1,15 +1,9 @@
 import React, { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { PROJECTS } from '../../config/projectData';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const PROJECTS = [
-  { id: 'pcw1', num: '01', cat: 'UI/UX · Finance', name: 'FinWise — Budgeting &\nExpense Tracking', bg: ['#131210', '#1a1814'], line: '#c9a96e', acc: '#c9a96e' },
-  { id: 'pcw2', num: '02', cat: 'UI/UX · E-Commerce', name: 'NEONVOID —\nRecord Store Platform', bg: ['#131210', '#1a1814'], line: '#c9a96e', acc: '#c9a96e' },
-  { id: 'pcw3', num: '03', cat: 'UI/UX · Health', name: 'Workout\nPlanning App', bg: ['#131210', '#1a1814'], line: '#c9a96e', acc: '#c9a96e' },
-  { id: 'pcw4', num: '04', cat: 'UI/UX · Wellness', name: 'Saanjh —\nMental Wellness Chatbot', bg: ['#131210', '#1a1814'], line: '#c9a96e', acc: '#c9a96e' },
-];
 
 function drawCardBg(el, cfg, idx) {
   const cv = document.createElement('canvas');
@@ -34,96 +28,219 @@ function drawCardBg(el, cfg, idx) {
 
 export default function Projects() {
   useEffect(() => {
-    // Draw canvas backgrounds
+    // Draw canvas backgrounds for both desktop and mobile preview elements
     PROJECTS.forEach((p, i) => {
-      const el = document.getElementById(`pi${i+1}`);
-      if (el) drawCardBg(el, p, i);
+      const elDesk = document.getElementById(`pi-desk-${i+1}`);
+      const elMob = document.getElementById(`pi-mob-${i+1}`);
+      if (elDesk) drawCardBg(elDesk, p, i);
+      if (elMob) drawCardBg(elMob, p, i);
     });
 
-    const pcw1 = document.getElementById('pcw1');
-    const pcw2 = document.getElementById('pcw2');
-    const pcw3 = document.getElementById('pcw3');
-    const pcw4 = document.getElementById('pcw4');
-    const titleWrap = document.getElementById('proj-title-wrap');
-    if (!pcw1 || !pcw2 || !pcw3 || !pcw4 || !titleWrap) return;
-
-    const isMobile = window.matchMedia('(max-width:860px)').matches;
+    const isMobile = window.matchMedia('(max-width:767px)').matches;
 
     const ctx = gsap.context(() => {
-      // More visible starting positions: slide in from left/right edges
-      gsap.set(pcw1, { x: '-25vw', y: 40, autoAlpha: 0 });
-      gsap.set(pcw2, { x: '25vw', y: 40, autoAlpha: 0 });
-      gsap.set(pcw3, { x: '-25vw', y: 40, autoAlpha: 0 });
-      gsap.set(pcw4, { x: '25vw', y: 40, autoAlpha: 0 });
-      gsap.set(titleWrap, { y: 0, autoAlpha: 1 });
+      if (!isMobile) {
+        PROJECTS.forEach((p) => {
+          const sec = document.getElementById(`psec-${p.id}`);
+          if (!sec) return;
 
-      const tl = gsap.timeline({
-        defaults: { ease: 'power3.out' }, // Premium soft easing
-        scrollTrigger: {
-          trigger: '#projects',
-          start: isMobile ? 'top 80%' : 'top top',
-          end: isMobile ? 'bottom 20%' : '+=3800',
-          pin: !isMobile, // Stack scrolls naturally on mobile
-          pinSpacing: !isMobile,
-          scrub: 1.5,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
+          const topHalf = sec.querySelector('.title-top');
+          const bottomHalf = sec.querySelector('.title-bottom');
+          const reveal = sec.querySelector('.project-reveal');
+          const desc = sec.querySelector('.project-desc');
+          const tech = sec.querySelector('.project-tech');
+          const ctas = sec.querySelector('.project-ctas');
+          const glow = sec.querySelector('.project-glow');
 
-      tl.to(pcw1, { x: 0, y: 0, autoAlpha: 1, duration: 0.40 }, 0.00)
-        .to(pcw2, { x: 0, y: 0, autoAlpha: 1, duration: 0.40 }, 0.25)
-        .to(pcw3, { x: 0, y: 0, autoAlpha: 1, duration: 0.40 }, 0.50)
-        .to(pcw4, { x: 0, y: 0, autoAlpha: 1, duration: 0.40 }, 0.75)
-        .to(titleWrap, { y: -32, autoAlpha: 0, duration: 0.15, ease: 'power2.inOut' }, 1.10);
+          // Initial positioning and 3D states
+          gsap.set(topHalf, { rotateX: 0, y: 0, autoAlpha: 1 });
+          gsap.set(bottomHalf, { rotateX: 0, y: 0, autoAlpha: 1 });
+          gsap.set(reveal, { scale: 0.95, autoAlpha: 0 });
+          gsap.set(desc, { y: 24, autoAlpha: 0 });
+          gsap.set(tech, { y: 24, autoAlpha: 0 });
+          gsap.set(ctas, { y: 24, autoAlpha: 0 });
+          gsap.set(glow, { autoAlpha: 0 });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sec,
+              start: 'top top',
+              end: '+=150%',
+              pin: true,
+              pinSpacing: true,
+              scrub: 1.2,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          // Theatre curtain style split reveal timeline
+          tl.to(topHalf, { rotateX: -25, y: -110, autoAlpha: 0, filter: 'blur(6px)', duration: 0.5 }, 0.00)
+            .to(bottomHalf, { rotateX: 25, y: 110, autoAlpha: 0, filter: 'blur(6px)', duration: 0.5 }, 0.00)
+            .to(reveal, { scale: 1, autoAlpha: 1, duration: 0.5 }, 0.20)
+            .to(glow, { autoAlpha: 1, duration: 0.5 }, 0.20)
+            .to(desc, { y: 0, autoAlpha: 1, duration: 0.3 }, 0.35)
+            .to(tech, { y: 0, autoAlpha: 1, duration: 0.3 }, 0.45)
+            .to(ctas, { y: 0, autoAlpha: 1, duration: 0.3 }, 0.55);
+        });
+      } else {
+        // Mobile cards fade up cleanly
+        const cards = document.querySelectorAll('.mob-proj-card');
+        cards.forEach((card) => {
+          gsap.fromTo(card,
+            { y: 40, autoAlpha: 0 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.8,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 85%',
+                toggleActions: 'play none none reverse',
+              }
+            }
+          );
+        });
+      }
     });
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="projects" className="bg-d0 w-full relative overflow-visible pt-[140px] pb-[100px] z-10">
-      <div id="proj-title-wrap" className="text-center px-[72px] mb-[52px] relative z-10 isolate will-change-[opacity,transform]">
+    <section id="projects" className="bg-d0 w-full relative overflow-visible pt-[120px] pb-[80px] z-10">
+      <div id="proj-title-wrap" className="text-center px-[72px] mb-[72px] relative z-10 isolate">
         <p className="slabel justify-center after:hidden">Selected Work</p>
         <h2 className="stitle !mb-0">Projects that <em>ship</em></h2>
       </div>
 
-      <div id="proj-grid" className="w-full px-6 md:px-[72px] overflow-x-clip">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[3px]">
-          {PROJECTS.map((p, i) => {
-            const isLeft = i % 2 === 0;
-            return (
-              <div className="pc-wrap" id={p.id} key={p.id}>
-                <a className="pc relative overflow-hidden border border-border rounded-[2px] h-[360px] md:h-[420px] block w-full no-underline transition-all duration-400 ease hover:shadow-[0_0_0_1px_rgba(201,169,110,.35),0_28px_70px_rgba(0,0,0,.6)] hover:border-[rgba(201,169,110,.35)] group" href="#">
-                  <div className="pc-img absolute inset-0 bg-cover bg-center transition-transform duration-[650ms] ease-[var(--ease)] group-hover:scale-[1.07] z-0" id={`pi${i+1}`}></div>
-                  <div className="absolute inset-0 bg-[rgba(8,7,5,.65)] opacity-0 transition-opacity duration-500 ease-[var(--ease)] group-hover:opacity-100 z-10"></div>
-                  
-                  {/* Top-left subtle details */}
-                  <div className="absolute top-[24px] left-[26px] z-30 flex items-center gap-2">
-                    <span className="font-mono text-[0.56rem] tracking-[0.22em] uppercase text-white/55">{p.num}</span>
-                    <span className="font-mono text-[0.55rem] tracking-[0.16em] uppercase text-[rgba(201,169,110,.65)] py-[3px] px-2 rounded-[2px] border border-[rgba(201,169,110,.2)] bg-black/35 backdrop-blur-md">{p.cat}</span>
-                  </div>
-                  
-                  {/* Alternating Content Layout -> Now Centered */}
-                  <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-6 p-10 md:p-14 pointer-events-none text-center">
-                    <h3 className="font-serif text-[1.65rem] md:text-[1.85rem] font-normal text-[#f5f1ea] leading-[1.2] tracking-[-0.01em] whitespace-pre-line opacity-0 translate-y-5 transition-all duration-500 ease-[var(--ease)] group-hover:opacity-100 group-hover:translate-y-0 delay-75">
-                      {p.name}
-                    </h3>
-                    <span className="pc-cta pointer-events-auto inline-flex items-center gap-[10px] py-[11px] px-6 bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase opacity-0 translate-y-5 transition-all duration-500 ease-[var(--ease)] group-hover:opacity-100 group-hover:translate-y-0 delay-150 hover:bg-[#d4b47a] hover:gap-[14px]">
-                      View Project
-                      <svg className="shrink-0 transition-transform duration-300 ease group-hover:translate-x-1" width="11" height="11" viewBox="0 0 11 11" fill="none">
-                        <path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>
-                  </div>
+      {/* DESKTOP SPLIT REVEAL STACK */}
+      <div className="hidden md:block w-full">
+        {PROJECTS.map((p, i) => (
+          <div
+            className="project-sec w-full h-screen flex items-center justify-center relative overflow-hidden bg-d0"
+            id={`psec-${p.id}`}
+            key={p.id}
+          >
+            {/* Background radial glow */}
+            <div className="project-glow absolute inset-0 z-0 bg-[radial-gradient(circle_800px_at_center,rgba(201,169,110,0.06),transparent)] opacity-0 pointer-events-none transition-opacity"></div>
 
-                  {/* Bottom gradient stroke on hover */}
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] z-50 bg-gradient-to-r from-gold to-teal scale-x-0 origin-left transition-transform duration-[600ms] ease-[var(--ease)] group-hover:scale-x-100"></div>
-                </a>
+            {/* Revealed Project Content */}
+            <div className="project-reveal absolute inset-0 z-10 flex flex-row items-center justify-center gap-16 px-[80px] max-w-[1440px] mx-auto w-full opacity-0 pointer-events-none">
+              
+              {/* Left Column: Premium Canvas Card Preview */}
+              <div className="w-1/2 aspect-[4/3] max-h-[460px] relative rounded-[4px] overflow-hidden border border-border shadow-[0_30px_80px_rgba(0,0,0,0.8)]">
+                <div className="pc-img absolute inset-0 bg-cover bg-center" id={`pi-desk-${i+1}`}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                
+                <div className="absolute top-[28px] left-[30px] z-30 flex items-center gap-2">
+                  <span className="font-mono text-[0.6rem] tracking-[0.22em] uppercase text-white/55">{p.num}</span>
+                  <span className="font-mono text-[0.58rem] tracking-[0.16em] uppercase text-[rgba(201,169,110,.65)] py-[3px] px-2 rounded-[2px] border border-[rgba(201,169,110,.2)] bg-black/35 backdrop-blur-md">{p.cat}</span>
+                </div>
+
               </div>
-            );
-          })}
-        </div>
+
+              {/* Right Column: Project Meta & Content */}
+              <div className="w-1/2 flex flex-col items-start text-left pointer-events-auto">
+                <span className="font-mono text-[0.7rem] tracking-[0.25em] text-gold uppercase mb-3">{p.cat}</span>
+                <h3 className="font-serif text-[2.8rem] text-t-hi leading-tight mb-4 font-normal whitespace-pre-line">{p.name}</h3>
+                
+                <p className="project-desc text-t-mid text-[0.92rem] leading-relaxed mb-6 max-w-[480px] opacity-0">
+                  {p.desc}
+                </p>
+
+                <div className="project-tech flex flex-wrap gap-2 mb-8 opacity-0">
+                  {p.tech.map((t) => (
+                    <span className="py-1 px-3 rounded-[2px] border border-border/40 text-[0.68rem] tracking-[0.1em] text-t-lo uppercase bg-black/20" key={t}>{t}</span>
+                  ))}
+                </div>
+
+                <div className="project-ctas flex gap-4 opacity-0">
+                  <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:bg-[#d4b47a]">Live Preview</a>
+                  <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:border-gold hover:text-gold">View Code</a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Title Split Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+              <div className="relative w-full h-[300px]" style={{ perspective: '1200px' }}>
+                
+                {/* Top Half Mask - Clips bottom 50% */}
+                <div 
+                  className="title-top absolute inset-0 flex items-center justify-center origin-bottom" 
+                  style={{ 
+                    clipPath: 'inset(0% 0% 50% 0%)',
+                    WebkitClipPath: 'inset(0% 0% 50% 0%)',
+                    transformStyle: 'preserve-3d' 
+                  }}
+                >
+                  <h3 className="font-serif text-[6vw] text-[#f5f1ea] leading-none uppercase tracking-[0.05em] select-none text-center">
+                    {p.splitName}
+                  </h3>
+                </div>
+
+                {/* Bottom Half Mask - Clips top 50% */}
+                <div 
+                  className="title-bottom absolute inset-0 flex items-center justify-center origin-top" 
+                  style={{ 
+                    clipPath: 'inset(50% 0% 0% 0%)',
+                    WebkitClipPath: 'inset(50% 0% 0% 0%)',
+                    transformStyle: 'preserve-3d' 
+                  }}
+                >
+                  <h3 className="font-serif text-[6vw] text-[#f5f1ea] leading-none uppercase tracking-[0.05em] select-none text-center">
+                    {p.splitName}
+                  </h3>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        ))}
+      </div>
+
+      {/* MOBILE LAYOUT (CLEAN STACK WITH FADE IN EFFECTS) */}
+      <div className="block md:hidden px-6 flex flex-col gap-16 w-full">
+        {PROJECTS.map((p, i) => (
+          <div className="mob-proj-card w-full flex flex-col gap-5" key={p.id}>
+            
+            {/* Visual Preview */}
+            <div className="w-full aspect-[4/3] relative rounded-[4px] overflow-hidden border border-border shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+              <div className="pc-img absolute inset-0 bg-cover bg-center" id={`pi-mob-${i+1}`}></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+              <div className="absolute top-[20px] left-[22px] z-30 flex items-center gap-2">
+                <span className="font-mono text-[0.56rem] tracking-[0.22em] uppercase text-white/55">{p.num}</span>
+                <span className="font-mono text-[0.55rem] tracking-[0.16em] uppercase text-[rgba(201,169,110,.65)] py-[3px] px-2 rounded-[2px] border border-[rgba(201,169,110,.2)] bg-black/35 backdrop-blur-md">{p.cat}</span>
+              </div>
+
+            </div>
+
+            {/* Info */}
+            <div className="flex flex-col items-start text-left">
+              <span className="font-mono text-[0.65rem] tracking-[0.2em] text-gold uppercase mb-2">{p.cat}</span>
+              <h3 className="font-serif text-[1.8rem] text-t-hi leading-tight mb-3 font-normal whitespace-pre-line">{p.name}</h3>
+              <p className="text-t-mid text-[0.88rem] leading-relaxed mb-5">
+                {p.desc}
+              </p>
+
+              <div className="flex flex-wrap gap-1.5 mb-6">
+                {p.tech.map((t) => (
+                  <span className="py-0.5 px-2.5 rounded-[2px] border border-border/40 text-[0.62rem] tracking-[0.08em] text-t-lo uppercase bg-black/20" key={t}>{t}</span>
+                ))}
+              </div>
+
+              <div className="flex gap-3 w-full">
+                <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 text-center bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.15em] uppercase hover:bg-[#d4b47a]">Live Preview</a>
+                <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 text-center border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.15em] uppercase hover:border-gold hover:text-gold">View Code</a>
+              </div>
+            </div>
+
+          </div>
+        ))}
       </div>
     </section>
   );

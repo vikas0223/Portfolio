@@ -1,8 +1,9 @@
 import React, { Suspense, useRef } from 'react';
 import gsap from 'gsap';
-import HeroModel from './HeroModel';
-import bgPattern from '../assets/bg.png';
-import profileImg from '../assets/Profile.png';
+import HeroModel from '../../three/HeroScene';
+import bgPattern from '../../assets/images/hero-bg.png';
+import profileImg from '../../assets/images/profile.png';
+import { siteConfig } from '../../config/siteConfig';
 
 export default function Hero() {
   const rotTarget = useRef({ x: 0, y: 0 });
@@ -34,12 +35,12 @@ export default function Hero() {
         <div className="mb-[30px]">
           <p className="hl dim text-[clamp(2rem,7vw,3.2rem)] md:text-[clamp(2.8rem,4.4vw,5rem)]">
             Hey, I'm <span className="inline-flex items-center justify-center overflow-hidden shrink-0 rounded-full shadow-[0_4px_18px_rgba(0,0,0,.14)] relative top-[0.04em] w-[58px] h-[58px] bg-d3 border border-border">
-              <img src={profileImg} alt="Vikas" className="w-full h-full object-cover object-[center_20%]" />
-            </span> <strong className="text-t-hi font-medium">Vikas</strong>
+              <img src={profileImg} alt={siteConfig.name} className="w-full h-full object-cover object-[center_20%]" />
+            </span> <strong className="text-t-hi font-medium">{siteConfig.name.split(' ')[0]}</strong>
           </p>
-          <p className="hl text-[clamp(2rem,7vw,3.2rem)] md:text-[clamp(2.8rem,4.4vw,5rem)]">UI/UX Designer</p>
+          <p className="hl text-[clamp(2rem,7vw,3.2rem)] md:text-[clamp(2.8rem,4.4vw,5rem)]">{siteConfig.role}</p>
           <p className="hl dim text-[clamp(2rem,7vw,3.2rem)] md:text-[clamp(2.8rem,4.4vw,5rem)]">
-            Based in <strong className="text-t-hi font-medium">India</strong>
+            Based in <strong className="text-t-hi font-medium">{siteConfig.location}</strong>
           </p>
         </div>
 
