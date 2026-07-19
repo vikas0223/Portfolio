@@ -12,12 +12,16 @@ export default function Hero() {
     const rect = e.currentTarget.getBoundingClientRect();
     const nx = (e.clientX - rect.left) / rect.width - 0.5;
     const ny = (e.clientY - rect.top) / rect.height - 0.5;
-    gsap.to(rotTarget.current, { y: nx * 0.10, x: ny * 0.08,
-      duration: 1.0, ease: 'power2.out', overwrite: true });
+    gsap.to(rotTarget.current, {
+      y: nx * 0.10, x: ny * 0.08,
+      duration: 1.0, ease: 'power2.out', overwrite: true
+    });
   };
   const handleMouseLeave = () => {
-    gsap.to(rotTarget.current, { x: 0, y: 0,
-      duration: 1.8, ease: 'power3.out', overwrite: true });
+    gsap.to(rotTarget.current, {
+      x: 0, y: 0,
+      duration: 1.8, ease: 'power3.out', overwrite: true
+    });
   };
 
   return (
