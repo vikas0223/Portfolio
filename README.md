@@ -38,10 +38,10 @@ Here is a visual overview of key sections across the experience:
 
 | Section | Preview |
 | :--- | :--- |
-| **Hero Section** | ![Hero Preview](./src/assets/images/hero.png) |
+| **Hero Section** | ![Hero Preview](./public/screenshots/hero.png) |
 | **About Section** | ![About Preview](./public/screenshots/about.png) |
 | **Projects Showcase** | ![Projects Preview](./public/screenshots/projects.png) |
-| **Usual Suspects** | ![Usual Suspects Preview](./src/assets/images/usual-suspects.png) |
+| **Usual Suspects** | ![Usual Suspects Preview](./public/screenshots/usual-suspects.png) |
 | **Contact Terminal** | ![Contact Preview](./public/screenshots/contact.png) |
 | **Mobile View** | ![Mobile Preview](./public/screenshots/mobile.png) |
 | **Preloader Experience** | ![Preloader Preview](./public/screenshots/preloader.png) |
