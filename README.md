@@ -24,7 +24,7 @@ Explore the live portfolio and interactive 3D web experience:
 
 <div align="center">
 
-[![Live Portfolio](https://img.shields.io/badge/🌐_Live_Portfolio-[YOUR_PORTFOLIO_URL_HERE](https://portfolio-pro-hive.vercel.app/)-gold?style=for-the-badge)]([https://your-portfolio-domain.com](https://portfolio-pro-hive.vercel.app/))
+[![Live Portfolio]((https://portfolio-pro-hive.vercel.app/))
 [![Resume](https://img.shields.io/badge/📄_View_Resume-YOUR_RESUME_URL_HERE-111111?style=for-the-badge)](https://your-resume-url.com)
 [![GitHub](https://img.shields.io/badge/💻_GitHub_Repository-https://github.com/vikas0223/Portfolio-000000?style=for-the-badge&logo=github)](https://github.com/vikas0223/Portfolio)
 
