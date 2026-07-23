@@ -5,18 +5,18 @@ import * as THREE from 'three';
 
 /* ── Color palette (matches contact form dark/gold theme) ── */
 const C = {
-  deskWood:  '#8b6914',   // warm wood
-  deskEdge:  '#6b4f10',   // darker wood trim
-  legs:      '#2a2a2a',   // dark metal legs
-  beige:     '#d4c5a0',   // retro computer beige
+  deskWood: '#8b6914',   // warm wood
+  deskEdge: '#6b4f10',   // darker wood trim
+  legs: '#2a2a2a',   // dark metal legs
+  beige: '#d4c5a0',   // retro computer beige
   beigeDark: '#b8a87c',   // darker beige for sides
-  screen:    '#0d1117',   // dark screen
-  screenGlow:'#c9a96e',   // gold glow matching accent
-  chair:     '#1a1a1a',   // dark chair
+  screen: '#0d1117',   // dark screen
+  screenGlow: '#c9a96e',   // gold glow matching accent
+  chair: '#1a1a1a',   // dark chair
   chairCush: '#1e1e2a',   // dark cushion
-  keyboard:  '#c8b88a',   // beige keyboard
-  mouse:     '#bfae85',   // beige mouse
-  paper:     '#e8dcc8',   // paper/notepad
+  keyboard: '#c8b88a',   // beige keyboard
+  mouse: '#bfae85',   // beige mouse
+  paper: '#e8dcc8',   // paper/notepad
 };
 
 /* ── CRT Monitor ── */
@@ -89,10 +89,10 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
     const ctx = canvas.getContext('2d');
     if (ctx) {
       const hasInput = !!(formData.name || formData.email || formData.message || formData.company || formData.projectType);
-      
+
       const blinkFreq = isHoveringSend ? 4 : 2;
       const showCursor = phase === 'ready' && !isSubmitted && !isSubmitting && !hasInput && (Math.floor(t * blinkFreq) % 2 === 0);
-      
+
       let elapsedSub = 0;
       let progressVal = -1;
       let subText = '';
@@ -170,9 +170,9 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
           for (let i = 0; i < d.length; i += 4) {
             const val = Math.random() > 0.5 ? 255 : 0;
             d[i] = val * 0.8;
-            d[i+1] = val * 0.75;
-            d[i+2] = val * 0.55;
-            d[i+3] = 45; // slight opacity so background shows
+            d[i + 1] = val * 0.75;
+            d[i + 2] = val * 0.55;
+            d[i + 3] = 45; // slight opacity so background shows
           }
           ctx.putImageData(imgData, 0, 0);
         } else if (phase === 'booting') {
@@ -199,7 +199,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
             // Delivered Screen
             ctx.fillStyle = '#52ff9e'; // bright vivid green
             ctx.fillText('STATUS: DELIVERED ✓', 60, 100);
-            
+
             ctx.fillStyle = '#ffd580';
             ctx.font = '40px monospace';
             ctx.fillText('=============================', 60, 170);
@@ -217,7 +217,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
             ctx.fillText('TRANSMITTING PAYLOAD...', 60, 100);
             ctx.font = '40px monospace';
             ctx.fillText('=============================', 60, 170);
-            
+
             ctx.fillText(subText, 60, 280);
             ctx.font = '48px monospace';
             ctx.fillText(bar, 60, 380);
@@ -268,7 +268,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
               // Checklist verification
               ctx.font = '40px monospace';
               ctx.fillText('=============================', 60, 320);
-              
+
               ctx.fillStyle = formData.name ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
               ctx.fillText(formData.name ? 'Identity Verified ✓' : 'Authenticating User...', 60, 400);
 
@@ -559,11 +559,11 @@ function DeskScene({ formData, isSubmitting, isSubmitted, isHoveringSend, inView
 
       {/* ── Items on desk ── */}
       <Tower position={[-1.0, 1.04, -0.2]} />
-      <CRTMonitor 
-        position={[0.0, 1.04, -0.25]} 
-        formData={formData} 
-        isSubmitting={isSubmitting} 
-        isSubmitted={isSubmitted} 
+      <CRTMonitor
+        position={[0.0, 1.04, -0.25]}
+        formData={formData}
+        isSubmitting={isSubmitting}
+        isSubmitted={isSubmitted}
         isHoveringSend={isHoveringSend}
         inView={inView}
       />
@@ -630,10 +630,10 @@ function SceneController({ formData, isSubmitting, isSubmitted, isHoveringSend, 
   return (
     <group ref={groupRef} rotation={[0, -0.4, 0]}>
       <Float speed={0.8} rotationIntensity={0.02} floatIntensity={0.04}>
-        <DeskScene 
-          formData={formData} 
-          isSubmitting={isSubmitting} 
-          isSubmitted={isSubmitted} 
+        <DeskScene
+          formData={formData}
+          isSubmitting={isSubmitting}
+          isSubmitted={isSubmitted}
           isHoveringSend={isHoveringSend}
           inView={inView}
         />
@@ -682,10 +682,10 @@ export default function ContactModel({ formData, isSubmitting, isSubmitted, isHo
       <Environment preset="night" environmentIntensity={0.1} />
 
       <React.Suspense fallback={null}>
-        <SceneController 
-          formData={formData} 
-          isSubmitting={isSubmitting} 
-          isSubmitted={isSubmitted} 
+        <SceneController
+          formData={formData}
+          isSubmitting={isSubmitting}
+          isSubmitted={isSubmitted}
           isHoveringSend={isHoveringSend}
           inView={inView}
         />
