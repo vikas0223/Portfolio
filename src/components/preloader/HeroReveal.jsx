@@ -40,12 +40,17 @@ export function animateHeroReveal(tl) {
     '-=0.35'
   );
 
-  // 6. Hero secondary CTA button ("View Work") slide up - after primary finishes with a 250ms stagger
-  tl.fromTo('#hero-secondary-cta', 
-    { y: 20, opacity: 0 }, 
-    { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, 
-    '+=0.25'
-  );
+  // 6. Hero secondary CTA button ("View Work") slide up - only when visible (mobile breakpoint)
+  const secCta = typeof document !== 'undefined' ? document.getElementById('hero-secondary-cta') : null;
+  const isSecCtaVisible = secCta && window.getComputedStyle(secCta).display !== 'none';
+
+  if (isSecCtaVisible) {
+    tl.fromTo('#hero-secondary-cta', 
+      { y: 20, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, 
+      '+=0.25'
+    );
+  }
 
   // 6. Scroll indicator line & text reveal
   tl.fromTo('.sline', 
