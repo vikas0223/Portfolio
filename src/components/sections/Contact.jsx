@@ -143,14 +143,12 @@ export default function Contact() {
 
     const ctx = gsap.context(() => {
       const items = gsap.utils.toArray('.contact-reveal-item');
-      const card = document.querySelector('.contact-reveal-card');
       const quote = document.querySelector('.contact-reveal-quote');
       const modelContainer = document.getElementById('contact-3d-container');
 
       // Set initial states for clean entrance animations
       gsap.set(items, { opacity: 0, y: 20, filter: 'blur(6px)', scale: 0.99 });
-      gsap.set(card, { opacity: 0, scale: 0.95, y: 15 });
-      gsap.set(quote, { opacity: 0, y: 10 });
+      if (quote) gsap.set(quote, { opacity: 0, y: 10 });
       if (modelContainer) gsap.set(modelContainer, { opacity: 0, scale: 0.96 });
 
       const tl = gsap.timeline({
@@ -176,13 +174,6 @@ export default function Contact() {
           duration: 0.7,
           ease: 'power3.out'
         }, '-=0.45')
-        .to(card, {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.5,
-          ease: 'back.out(1.2)'
-        }, '-=0.3')
         .to(quote, {
           opacity: 1,
           y: 0,
@@ -387,7 +378,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* 3D CRT Monitor Scene & Contact Card */}
+        {/* 3D CRT Monitor Scene & Quote */}
         <div className="w-full lg:w-[50%] flex flex-col relative items-center justify-center mt-6 lg:mt-0 gap-4">
 
           {/* Retro Computer 3D Model Container */}
@@ -401,34 +392,6 @@ export default function Contact() {
             />
             {/* System-inspired annotations */}
             <ContactDoodles />
-          </div>
-
-          {/* Contact Info Card */}
-          <div className="contact-reveal-card w-full max-w-[420px] bg-d2 border border-border/80 rounded-2xl p-5 shadow-[0_8px_30px_rgba(201,169,110,0.06)] flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green"></span>
-              </span>
-              <span className="text-[0.72rem] text-t-hi font-medium uppercase tracking-wider font-mono">Available for Hire</span>
-            </div>
-
-            <div className="h-px bg-white/5 my-0.5"></div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <div>
-                <p className="text-[0.55rem] font-mono tracking-wider uppercase text-t-lo">Location</p>
-                <p className="text-[0.74rem] text-t-hi font-medium mt-0.5">{siteConfig.location}</p>
-              </div>
-              <div>
-                <p className="text-[0.55rem] font-mono tracking-wider uppercase text-t-lo">Response Time</p>
-                <p className="text-[0.74rem] text-t-hi font-medium mt-0.5">{siteConfig.availability.responseTime}</p>
-              </div>
-              <div>
-                <p className="text-[0.55rem] font-mono tracking-wider uppercase text-t-lo">Freelance</p>
-                <p className="text-[0.74rem] text-t-hi font-medium mt-0.5">{siteConfig.availability.freelance}</p>
-              </div>
-            </div>
           </div>
 
           {/* Custom Quote Card */}
