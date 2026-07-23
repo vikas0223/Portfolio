@@ -18,17 +18,17 @@ A modern, highly performant web portfolio featuring interactive 3D WebGL scenes,
 
 ---
 
-## 🚀 Live Demo
+## 🌐 Live Demo
 
-Explore the live portfolio and interactive 3D web experience:
+<p align="center">
+  <a href="https://portfolio-pro-hive.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Portfolio-Visit%20Now-C9A96E?style=for-the-badge" alt="Live Portfolio"/>
+  </a>
+</p>
 
-<div align="center">
-
-[![Live Portfolio]((https://portfolio-pro-hive.vercel.app/))
-[![Resume](https://img.shields.io/badge/📄_View_Resume-YOUR_RESUME_URL_HERE-111111?style=for-the-badge)](https://your-resume-url.com)
-[![GitHub](https://img.shields.io/badge/💻_GitHub_Repository-https://github.com/vikas0223/Portfolio-000000?style=for-the-badge&logo=github)](https://github.com/vikas0223/Portfolio)
-
-</div>
+<p align="center">
+Experience the portfolio with immersive animations, interactive 3D scenes, and responsive design.
+</p>
 
 ---
 
