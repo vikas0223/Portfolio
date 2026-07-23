@@ -109,10 +109,10 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="bg-d0 w-full relative overflow-visible pt-[120px] pb-[80px] z-10">
-      <div id="proj-title-wrap" className="text-center px-[72px] mb-[72px] relative z-10 isolate">
+    <section id="projects" className="bg-d0 w-full relative overflow-visible pt-20 md:pt-[120px] pb-16 md:pb-[80px] z-10">
+      <div id="proj-title-wrap" className="text-center px-5 sm:px-8 md:px-[72px] mb-10 md:mb-[72px] relative z-10 isolate">
         <p className="slabel justify-center after:hidden">Selected Work</p>
-        <h2 className="stitle !mb-0">Projects that <em>ship</em></h2>
+        <h2 className="stitle !mb-0 text-[clamp(2.2rem,6vw,3.8rem)]">Projects that <em>ship</em></h2>
       </div>
 
       {/* DESKTOP SPLIT REVEAL STACK */}
@@ -157,8 +157,8 @@ export default function Projects() {
                 </div>
 
                 <div className="project-ctas flex gap-4 opacity-0">
-                  <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:bg-[#d4b47a]">Live Preview</a>
-                  <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:border-gold hover:text-gold">View Code</a>
+                  <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:bg-[#d4b47a]">Live Preview</a>
+                  <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:border-gold hover:text-gold">View Code</a>
                 </div>
               </div>
 
@@ -203,39 +203,43 @@ export default function Projects() {
         ))}
       </div>
 
-      {/* MOBILE LAYOUT (CLEAN STACK WITH FADE IN EFFECTS) */}
-      <div className="block md:hidden px-6 flex flex-col gap-16 w-full">
+      {/* MOBILE LAYOUT (CLEAN STACK WITH STACKED CTA BUTTONS) */}
+      <div className="block md:hidden px-5 sm:px-8 flex flex-col gap-14 w-full">
         {PROJECTS.map((p, i) => (
           <div className="mob-proj-card w-full flex flex-col gap-5" key={p.id}>
             
             {/* Visual Preview */}
-            <div className="w-full aspect-[4/3] relative rounded-[4px] overflow-hidden border border-border shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+            <div className="w-full aspect-[4/3] relative rounded-[8px] overflow-hidden border border-border shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               <div className="pc-img absolute inset-0 bg-cover bg-center" id={`pi-mob-${i+1}`}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-              <div className="absolute top-[20px] left-[22px] z-30 flex items-center gap-2">
+              <div className="absolute top-[16px] left-[18px] z-30 flex items-center gap-2">
                 <span className="font-mono text-[0.56rem] tracking-[0.22em] uppercase text-white/55">{p.num}</span>
                 <span className="font-mono text-[0.55rem] tracking-[0.16em] uppercase text-[rgba(201,169,110,.65)] py-[3px] px-2 rounded-[2px] border border-[rgba(201,169,110,.2)] bg-black/35 backdrop-blur-md">{p.cat}</span>
               </div>
-
             </div>
 
             {/* Info */}
             <div className="flex flex-col items-start text-left">
               <span className="font-mono text-[0.65rem] tracking-[0.2em] text-gold uppercase mb-2">{p.cat}</span>
-              <h3 className="font-serif text-[1.8rem] text-t-hi leading-tight mb-3 font-normal whitespace-pre-line">{p.name}</h3>
+              <h3 className="font-serif text-[1.8rem] sm:text-[2.2rem] text-t-hi leading-tight mb-3 font-normal whitespace-pre-line">{p.name}</h3>
               <p className="text-t-mid text-[0.88rem] leading-relaxed mb-5">
                 {p.desc}
               </p>
 
               <div className="flex flex-wrap gap-1.5 mb-6">
                 {p.tech.map((t) => (
-                  <span className="py-0.5 px-2.5 rounded-[2px] border border-border/40 text-[0.62rem] tracking-[0.08em] text-t-lo uppercase bg-black/20" key={t}>{t}</span>
+                  <span className="py-1 px-2.5 rounded-[2px] border border-border/40 text-[0.62rem] tracking-[0.08em] text-t-lo uppercase bg-black/20" key={t}>{t}</span>
                 ))}
               </div>
 
-              <div className="flex gap-3 w-full">
-                <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 text-center bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.15em] uppercase hover:bg-[#d4b47a]">Live Preview</a>
-                <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 text-center border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.15em] uppercase hover:border-gold hover:text-gold">View Code</a>
+              {/* Stacked CTA Buttons on Mobile — Equal Prominence & 48px Min Target */}
+              <div className="flex flex-col sm:flex-row gap-3 w-full">
+                <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="w-full min-h-[48px] py-3 flex items-center justify-center bg-gold text-d0 rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium active:scale-95 transition-transform hover:bg-[#d4b47a]">
+                  Live Preview
+                </a>
+                <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="w-full min-h-[48px] py-3 flex items-center justify-center border border-border/60 text-t-hi rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium bg-white/5 active:scale-95 transition-transform hover:border-gold hover:text-gold">
+                  View Code
+                </a>
               </div>
             </div>
 

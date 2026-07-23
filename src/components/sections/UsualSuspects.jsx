@@ -46,35 +46,17 @@ export default function UsualSuspects() {
   return (
     <section
       ref={sectionRef}
+      className="w-full py-16 sm:py-20 md:py-28 px-5 sm:px-8 md:px-12 flex flex-col items-center justify-center overflow-hidden border-t border-white/5"
       style={{
         background: 'linear-gradient(180deg, #0c0b09 0%, #11100e 100%)',
-        borderTop: '1px solid rgba(255,255,255,0.05)',
-        width: '100%',
-        padding: '100px 24px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
       }}
     >
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: '1200px',
-      }}>
+      <div className="w-full max-w-[1200px] flex flex-col items-center">
         
         {/* TITLE */}
         <h2 
           ref={titleRef}
-          style={{
-            margin: '0 0 16px 0',
-            textAlign: 'center',
-            lineHeight: 1.1,
-            fontSize: 'clamp(2.5rem, 6vw, 5.5rem)',
-          }}
+          className="mb-4 text-center leading-tight text-[clamp(2.1rem,6vw,5.5rem)]"
         >
           <span style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -101,15 +83,7 @@ export default function UsualSuspects() {
         {/* SUBTITLE */}
         <p 
           ref={subtitleRef}
-          style={{
-            margin: '0',
-            textAlign: 'center',
-            color: '#888480',
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 'clamp(0.9rem, 2vw, 1.125rem)',
-            fontWeight: 300,
-            letterSpacing: '0.02em',
-          }}
+          className="text-center text-[#888480] font-sans font-light tracking-wide text-[clamp(0.85rem,2vw,1.125rem)] max-w-[500px]"
         >
           These are the tools I work with on a regular basis.
         </p>
@@ -117,25 +91,12 @@ export default function UsualSuspects() {
         {/* IMAGE */}
         <div 
           ref={imageRef}
-          style={{
-            marginTop: '60px', // Proper margin-top requirement
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
+          className="mt-8 sm:mt-12 md:mt-16 w-full flex justify-center max-w-full overflow-hidden"
         >
           <img
             src={suspectsImg}
             alt="The Usual Suspects Tools"
-            style={{
-              width: '100%',
-              maxWidth: '100%',
-              height: 'auto',
-              display: 'block',
-              objectFit: 'contain',
-              boxShadow: '0 15px 35px rgba(0,0,0,0.5)', // Very subtle shadow
-              borderRadius: '8px',
-            }}
+            className="w-full max-w-full h-auto block object-contain shadow-[0_15px_35px_rgba(0,0,0,0.5)] rounded-lg"
           />
         </div>
 

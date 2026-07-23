@@ -10,6 +10,14 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
+    // Check touch / tablet media query
+    const isTouchOrTablet = window.matchMedia('(pointer: coarse), (max-width: 1024px)').matches;
+    if (isTouchOrTablet) {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+      return;
+    }
+
     // Use GSAP's quickSetter for maximum performance (bypasses style recalc)
     const setDotX = gsap.quickSetter(dot, 'x', 'px');
     const setDotY = gsap.quickSetter(dot, 'y', 'px');

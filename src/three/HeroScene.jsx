@@ -71,7 +71,7 @@ export default function RoomModel({ rotTarget }) {
   return (
     <Canvas
       camera={{ fov: 45, position: [6, 5, 9] }}
-      dpr={[1, 2]}
+      dpr={[1, Math.min(2, typeof window !== 'undefined' ? window.devicePixelRatio : 1)]}
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,

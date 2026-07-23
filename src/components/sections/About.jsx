@@ -21,7 +21,7 @@ export default function About() {
   }, [])
 
   return (
-    <section id="about" className="sec bg-d1 border-t border-border">
+    <section id="about" className="sec bg-d1 border-t border-border px-5 sm:px-8 md:px-[72px]">
       <SectionGlow />
       <p className="slabel" data-r>About</p>
       <h2 className="stitle" data-r="c">Designing with <em><span
@@ -32,7 +32,7 @@ export default function About() {
           transform: visible ? 'translateY(0px)' : 'translateY(-6px)',
         }}
       >{words[index]}</span></em></h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[76px] items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[76px] items-start">
         <p className="bio" data-r="l" data-d="1">
           <strong className="text-t-hi font-medium">Computer Science &amp; Engineering graduate</strong> (specializing in AI &amp; ML) from Chandigarh University. I focus on creating interfaces that bridge complex system engineering and intuitive user experiences.<br /><br />
           My engineering background gives me an edge when collaborating with developers on technically complex interfaces, translating functional requirements into performant visuals. Currently seeking a <strong className="text-t-hi font-medium">UI/UX or Product Designer role</strong> to help build products that feel effortless to use.
@@ -40,21 +40,15 @@ export default function About() {
 
         {/* Right side profile image */}
         <div
-          className="relative w-full flex justify-center md:justify-end -mt-16 md:-mt-[130px]"
+          className="relative w-full flex justify-center md:justify-end mt-4 md:-mt-[130px] overflow-hidden sm:overflow-visible"
           data-r="r"
           data-d="2"
         >
-          <div className="relative inline-block select-none group">
+          <div className="relative inline-block select-none group max-w-full">
             <img
               src={profileImg}
               alt="Profile"
-              className="transition-transform duration-700 hover:scale-105"
-              style={{
-                maxHeight: '480px',
-                width: 'auto',
-                objectFit: 'contain',
-                objectPosition: 'top'
-              }}
+              className="transition-transform duration-700 hover:scale-105 max-h-[380px] sm:max-h-[480px] w-auto object-contain object-top"
             />
             {/* Figma-style inspector design annotations */}
             <AboutDoodles />

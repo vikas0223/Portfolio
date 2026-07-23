@@ -108,52 +108,79 @@ export default function Navbar() {
         {/* RIGHT: Mobile Menu Toggle */}
         <div className="flex-1 flex justify-end md:hidden">
           <button
-            className="w-8 h-8 flex flex-col items-center justify-center gap-[5px] z-[502]"
+            aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+            className="w-12 h-12 min-h-[48px] min-w-[48px] flex flex-col items-center justify-center gap-[6px] z-[502] rounded-full bg-white/5 border border-white/10 active:scale-95 transition-transform"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <span className={`w-6 h-[1.5px] bg-t-hi transition-transform duration-300 ease-[var(--ease)] ${mobileMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`}></span>
-            <span className={`w-6 h-[1.5px] bg-t-hi transition-opacity duration-300 ease-[var(--ease)] ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`w-6 h-[1.5px] bg-t-hi transition-transform duration-300 ease-[var(--ease)] ${mobileMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`}></span>
+            <span className={`w-5 h-[1.5px] bg-t-hi transition-transform duration-300 ease-[var(--ease)] ${mobileMenuOpen ? 'rotate-45 translate-y-[7.5px]' : ''}`}></span>
+            <span className={`w-5 h-[1.5px] bg-t-hi transition-opacity duration-300 ease-[var(--ease)] ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`w-5 h-[1.5px] bg-t-hi transition-transform duration-300 ease-[var(--ease)] ${mobileMenuOpen ? '-rotate-45 -translate-y-[7.5px]' : ''}`}></span>
           </button>
         </div>
       </nav>
 
       {/* MOBILE MENU OVERLAY */}
       <div
-        className={`fixed inset-0 z-[501] bg-d0/98 backdrop-blur-xl flex flex-col justify-center items-center transition-all duration-500 ease-[var(--ease)] ${
-          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-[501] bg-[#0c0b11]/96 backdrop-blur-2xl flex flex-col justify-between items-center p-8 transition-all duration-500 ease-[var(--ease)] ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto scale-100' : 'opacity-0 pointer-events-none scale-95'
         }`}
       >
-        {/* Available for work (Mobile) */}
-        <div className="flex items-center gap-2 text-[0.8rem] text-t-lo mb-10 opacity-80">
-          <span className="w-[8px] h-[8px] rounded-full bg-green animate-[sdot-ping_2.2s_infinite]"></span>
-          <span>available for work</span>
+        <div className="w-full flex justify-between items-center pt-4">
+          <span className="font-serif text-[1.2rem] text-t-hi">{siteConfig.name}</span>
+          <span className="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-gold">Navigation</span>
         </div>
 
-        <ul className="flex flex-col items-center gap-8 list-none">
-          {navLinks.map((id) => (
-            <li key={id}>
-              <a
-                href={`#${id}`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-serif text-[2.2rem] text-t-hi hover:text-gold transition-colors"
+        <div className="flex flex-col items-center gap-6 my-auto w-full">
+          {/* Available for work (Mobile) */}
+          <div className="flex items-center gap-2 text-[0.76rem] font-mono text-t-lo uppercase tracking-[0.14em] mb-4">
+            <span className="w-[8px] h-[8px] rounded-full bg-green animate-[sdot-ping_2.2s_infinite]"></span>
+            <span>available for work</span>
+          </div>
+
+          <ul className="flex flex-col items-center gap-6 list-none w-full">
+            {navLinks.map((id, index) => (
+              <li
+                key={id}
+                className="w-full text-center transition-all duration-500"
+                style={{
+                  transitionDelay: mobileMenuOpen ? `${index * 80}ms` : '0ms',
+                  transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
+                  opacity: mobileMenuOpen ? 1 : 0
+                }}
               >
-                {id === 'projects' ? 'Work' : id.charAt(0).toUpperCase() + id.slice(1)}
-              </a>
-            </li>
-          ))}
-          <li className="mt-6">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setShowResume(true);
+                <a
+                  href={`#${id}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-serif text-[2.4rem] sm:text-[3rem] text-t-hi hover:text-gold active:text-gold transition-colors inline-block py-1 min-h-[48px] flex items-center justify-center"
+                >
+                  {id === 'projects' ? 'Work' : id.charAt(0).toUpperCase() + id.slice(1)}
+                </a>
+              </li>
+            ))}
+            <li
+              className="w-full flex justify-center mt-4 transition-all duration-500"
+              style={{
+                transitionDelay: mobileMenuOpen ? `${navLinks.length * 80}ms` : '0ms',
+                transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
+                opacity: mobileMenuOpen ? 1 : 0
               }}
-              className="py-3 px-8 rounded-full border border-gold/40 text-gold text-[0.8rem] tracking-[0.2em] uppercase transition-all active:scale-95"
             >
-              View Resume
-            </button>
-          </li>
-        </ul>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setShowResume(true);
+                }}
+                className="py-3.5 px-8 min-h-[48px] rounded-full border border-gold/40 text-gold text-[0.78rem] tracking-[0.2em] font-mono uppercase bg-gold/5 active:bg-gold/20 active:scale-95 transition-all"
+              >
+                View Resume
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div className="w-full text-center pb-4 text-t-lo font-mono text-[0.65rem] tracking-[0.15em] uppercase">
+          © 2026 {siteConfig.name}
+        </div>
       </div>
 
       {/* RESUME MODAL OVERLAY */}

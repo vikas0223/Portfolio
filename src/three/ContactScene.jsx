@@ -649,7 +649,7 @@ export default function ContactModel({ formData, isSubmitting, isSubmitted, isHo
   return (
     <Canvas
       camera={{ position: [3.1, 2.7, 4.0], fov: 31 }}
-      dpr={[1, 1.5]}
+      dpr={[1, Math.min(2, typeof window !== 'undefined' ? window.devicePixelRatio : 1)]}
       gl={{
         antialias: true,
         alpha: false,

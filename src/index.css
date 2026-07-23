@@ -57,6 +57,74 @@
   }
 }
 
+/* ══ TOUCH & MOBILE DEVICE CURSOR OVERRIDES ══ */
+@media (hover: none), (pointer: coarse), (max-width: 1024px) {
+  body {
+    cursor: auto !important;
+  }
+
+  #cdot,
+  #cring {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  a,
+  button,
+  label,
+  select,
+  input,
+  textarea,
+  summary,
+  .pill-btn,
+  .bub-fw,
+  .bub-nv,
+  .pill,
+  .mq-word,
+  .pc,
+  .pc-cta,
+  .cc,
+  .ec,
+  .er,
+  .fx,
+  .cf-sub,
+  .cf-in,
+  .cf-sel,
+  .cf-ta,
+  .cf-fr,
+  .cf-fl,
+  .nav-brand,
+  .nav-links a,
+  .proj-preview,
+  .pp-cta,
+  [role="button"] {
+    cursor: pointer !important;
+  }
+
+  /* Minimum 48px touch targets for mobile accessibility */
+  button,
+  a[role="button"],
+  .cf-in,
+  .cf-sel,
+  .cf-sub,
+  .pill-btn {
+    min-height: 48px;
+  }
+}
+
+/* ══ PREFERS REDUCED MOTION ══ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ══ PREMIUM SECTION STYLING ══ */
 section {
   position: relative;

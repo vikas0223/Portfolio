@@ -6,10 +6,10 @@ export default function Education() {
   return (
     <>
       {/* Education */}
-      <section id="education" className="sec bg-d1 border-t border-border">
+      <section id="education" className="sec bg-d1 border-t border-border px-5 sm:px-8 md:px-[72px]">
         <SectionGlow />
         <p className="slabel" data-r>Education</p>
-        <h2 className="stitle" data-r="c">Academic <em>background</em></h2>
+        <h2 className="stitle text-[clamp(2.1rem,4.2vw,3.8rem)]" data-r="c">Academic <em>background</em></h2>
         <div className="flex flex-col gap-[3px]">
           {EDUCATION_HISTORY.map((item, idx) => (
             <div className="er" data-r="l" data-d={idx + 1} key={idx}>
@@ -27,11 +27,11 @@ export default function Education() {
       </section>
 
       {/* Certifications */}
-      <section id="certs" className="sec bg-d0 border-t border-border">
+      <section id="certs" className="sec bg-d0 border-t border-border px-5 sm:px-8 md:px-[72px]">
         <SectionGlow />
         <p className="slabel" data-r>Certifications</p>
-        <h2 className="stitle" data-r="c">Verified <em>learning</em></h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-[3px]">
+        <h2 className="stitle text-[clamp(2.1rem,4.2vw,3.8rem)]" data-r="c">Verified <em>learning</em></h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[3px]">
           {CERTIFICATIONS.map((item, idx) => (
             <div className="cc" data-r data-d={idx + 1} key={idx}>
               <p className="cc-org">{item.organization}</p>
@@ -43,10 +43,10 @@ export default function Education() {
       </section>
 
       {/* Extra */}
-      <section id="extra" className="sec bg-d1 border-t border-border">
+      <section id="extra" className="sec bg-d1 border-t border-border px-5 sm:px-8 md:px-[72px]">
         <SectionGlow />
         <p className="slabel" data-r>Beyond Design</p>
-        <h2 className="stitle" data-r="c">Extra-curricular <em>achievements</em></h2>
+        <h2 className="stitle text-[clamp(2.1rem,4.2vw,3.8rem)]" data-r="c">Extra-curricular <em>achievements</em></h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[3px]">
           {ACHIEVEMENTS.map((item, idx) => (
             <div className="ec" data-r="s" data-d={idx + 1} key={idx}>
