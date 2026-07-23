@@ -64,7 +64,7 @@ export default function Navbar() {
     <>
       <nav
         id="nav"
-        className={`fixed top-0 left-0 right-0 z-[500] py-[22px] px-6 md:px-[60px] flex justify-between items-center transition-all duration-400 ease-in-out border-b border-transparent ${
+        className={`fixed top-0 left-0 right-0 z-[550] py-[22px] px-6 md:px-[60px] flex justify-between items-center transition-all duration-400 ease-in-out border-b border-transparent ${
           scrolled && !mobileMenuOpen ? 'bg-[rgba(12,11,9,.93)] backdrop-blur-[20px] !border-b-[var(--border)]' : ''
         } ${hidden ? '-translate-y-full' : ''}`}
       >
@@ -109,12 +109,34 @@ export default function Navbar() {
         <div className="flex-1 flex justify-end md:hidden">
           <button
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-            className="w-12 h-12 min-h-[48px] min-w-[48px] flex flex-col items-center justify-center gap-[6px] z-[502] rounded-full bg-white/5 border border-white/10 active:scale-95 transition-transform"
+            className={`w-12 h-12 min-h-[48px] min-w-[48px] flex flex-col items-center justify-center gap-[6px] relative rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-95 cursor-pointer ${
+              mobileMenuOpen
+                ? 'bg-gold/10 border border-gold/40 shadow-[0_0_20px_rgba(201,169,110,0.25)] rotate-180'
+                : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 rotate-0'
+            }`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <span className={`w-5 h-[1.5px] bg-t-hi transition-transform duration-300 ease-[var(--ease)] ${mobileMenuOpen ? 'rotate-45 translate-y-[7.5px]' : ''}`}></span>
-            <span className={`w-5 h-[1.5px] bg-t-hi transition-opacity duration-300 ease-[var(--ease)] ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`w-5 h-[1.5px] bg-t-hi transition-transform duration-300 ease-[var(--ease)] ${mobileMenuOpen ? '-rotate-45 -translate-y-[7.5px]' : ''}`}></span>
+            <span
+              className={`w-5 h-[1.5px] rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] origin-center ${
+                mobileMenuOpen
+                  ? 'bg-gold rotate-45 translate-y-[7.5px]'
+                  : 'bg-t-hi rotate-0 translate-y-0'
+              }`}
+            ></span>
+            <span
+              className={`w-5 h-[1.5px] rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                mobileMenuOpen
+                  ? 'bg-gold opacity-0 scale-x-0'
+                  : 'bg-t-hi opacity-100 scale-x-100'
+              }`}
+            ></span>
+            <span
+              className={`w-5 h-[1.5px] rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] origin-center ${
+                mobileMenuOpen
+                  ? 'bg-gold -rotate-45 -translate-y-[7.5px]'
+                  : 'bg-t-hi rotate-0 translate-y-0'
+              }`}
+            ></span>
           </button>
         </div>
       </nav>
@@ -125,10 +147,8 @@ export default function Navbar() {
           mobileMenuOpen ? 'opacity-100 pointer-events-auto scale-100' : 'opacity-0 pointer-events-none scale-95'
         }`}
       >
-        <div className="w-full flex justify-between items-center pt-4">
-          <span className="font-serif text-[1.2rem] text-t-hi">{siteConfig.name}</span>
-          <span className="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-gold">Navigation</span>
-        </div>
+        {/* Top spacer matching nav height */}
+        <div className="w-full h-[60px] shrink-0"></div>
 
         <div className="flex flex-col items-center gap-6 my-auto w-full">
           {/* Available for work (Mobile) */}
@@ -214,7 +234,7 @@ export default function Navbar() {
 
           <p className="font-mono text-[0.7rem] tracking-[0.25em] text-gold uppercase mb-4">Curriculum Vitae</p>
           <h2 className="font-serif text-[2.5rem] md:text-[3.2rem] text-t-hi font-light mb-8 text-center leading-tight">
-            {siteConfig.name}
+            Resume
           </h2>
 
           <div className="flex flex-col sm:flex-row gap-5 w-full max-w-[500px]">

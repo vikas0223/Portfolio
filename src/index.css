@@ -1138,7 +1138,8 @@ body.preloading .hero-sub {
   opacity: 0;
 }
 
-body.preloading #hero-cta {
+body.preloading #hero-cta,
+body.preloading #hero-secondary-cta {
   animation: none !important;
   opacity: 0;
 }

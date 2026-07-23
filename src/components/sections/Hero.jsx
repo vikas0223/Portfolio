@@ -65,7 +65,7 @@ export default function Hero() {
         </p>
 
         <div className="flex flex-wrap items-center gap-4 mb-8 md:mb-0">
-          <a href="#contact" className="inline-flex items-center self-start gap-2.5 px-6 py-3 min-h-[48px] rounded-full bg-gold text-d0 text-[0.78rem] font-medium tracking-[0.04em] font-sans opacity-0 animate-[fu_.85s_.88s_ease_forwards] transition-all hover:bg-[#d4b47a] active:scale-95 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(201,169,110,.20)] group" id="hero-cta">
+          <a href="#contact" id="hero-cta" className="inline-flex items-center self-start gap-2.5 px-6 py-3 min-h-[48px] rounded-full bg-gold text-d0 text-[0.78rem] font-medium tracking-[0.04em] font-sans opacity-0 transition-all hover:bg-[#d4b47a] active:scale-95 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(201,169,110,.20)] group">
             Get In Touch Today
             <span className="w-5 h-5 rounded-full bg-black/15 flex items-center justify-center shrink-0 transition-transform group-hover:rotate-45">
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
@@ -74,7 +74,7 @@ export default function Hero() {
             </span>
           </a>
 
-          <a href="#projects" className="inline-flex items-center self-start gap-2 px-5 py-3 min-h-[48px] rounded-full border border-white/15 text-t-hi text-[0.76rem] tracking-[0.06em] font-mono uppercase bg-white/5 hover:border-gold hover:text-gold active:scale-95 transition-all md:hidden">
+          <a href="#projects" id="hero-secondary-cta" className="inline-flex items-center self-start gap-2 px-5 py-3 min-h-[48px] rounded-full border border-white/15 text-t-hi text-[0.76rem] tracking-[0.06em] font-mono uppercase bg-white/5 opacity-0 hover:border-gold hover:text-gold active:scale-95 transition-all md:hidden">
             View Work
           </a>
         </div>

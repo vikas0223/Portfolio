@@ -33,11 +33,18 @@ export function animateHeroReveal(tl) {
     '-=0.55'
   );
 
-  // 5. Hero CTA button slide up
+  // 5. Hero primary CTA button ("Get In Touch Today") slide up
   tl.fromTo('#hero-cta', 
     { y: 20, opacity: 0 }, 
-    { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 
-    '-=0.55'
+    { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, 
+    '-=0.35'
+  );
+
+  // 6. Hero secondary CTA button ("View Work") slide up - after primary finishes with a 250ms stagger
+  tl.fromTo('#hero-secondary-cta', 
+    { y: 20, opacity: 0 }, 
+    { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' }, 
+    '+=0.25'
   );
 
   // 6. Scroll indicator line & text reveal
