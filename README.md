@@ -18,17 +18,17 @@ A modern, highly performant web portfolio featuring interactive 3D WebGL scenes,
 
 ---
 
-## 🚀 Live Demo
+## 🌐 Live Demo
 
-Explore the live portfolio and interactive 3D web experience:
+<p align="center">
+  <a href="https://portfolio-pro-hive.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Portfolio-Visit%20Now-C9A96E?style=for-the-badge" alt="Live Portfolio"/>
+  </a>
+</p>
 
-<div align="center">
-
-[![Live Portfolio](https://img.shields.io/badge/🌐_Live_Portfolio-YOUR_PORTFOLIO_URL_HERE-gold?style=for-the-badge)](https://your-portfolio-domain.com)
-[![Resume](https://img.shields.io/badge/📄_View_Resume-YOUR_RESUME_URL_HERE-111111?style=for-the-badge)](https://your-resume-url.com)
-[![GitHub](https://img.shields.io/badge/💻_GitHub_Repository-https://github.com/vikas0223/Portfolio-000000?style=for-the-badge&logo=github)](https://github.com/vikas0223/Portfolio)
-
-</div>
+<p align="center">
+Experience the portfolio with immersive animations, interactive 3D scenes, and responsive design.
+</p>
 
 ---
 
@@ -40,11 +40,6 @@ Here is a visual overview of key sections across the experience:
 | :--- | :--- |
 | **Hero Section** | ![Hero Preview](./public/screenshots/hero.png) |
 | **About Section** | ![About Preview](./public/screenshots/about.png) |
-| **Projects Showcase** | ![Projects Preview](./public/screenshots/projects.png) |
-| **Usual Suspects** | ![Usual Suspects Preview](./public/screenshots/usual-suspects.png) |
-| **Contact Terminal** | ![Contact Preview](./public/screenshots/contact.png) |
-| **Mobile View** | ![Mobile Preview](./public/screenshots/mobile.png) |
-| **Preloader Experience** | ![Preloader Preview](./public/screenshots/preloader.png) |
 
 ---
 
@@ -237,10 +232,10 @@ Follow these steps to set up and run the project locally on your machine:
 
 Let's connect and build something extraordinary:
 
-- **Portfolio**: [Live Website Placeholder](https://your-portfolio-domain.com)
-- **LinkedIn**: [linkedin.com/in/vikassingh](https://linkedin.com/in/your-profile)
+- **Portfolio**: [Live Website Placeholder](https://portfolio-pro-hive.vercel.app/)
+- **LinkedIn**: [linkedin.com/in/vikassingh](www.linkedin.com/in/vikas-singh-321v)
 - **GitHub**: [github.com/vikas0223](https://github.com/vikas0223)
-- **Email**: [contact@example.com](mailto:contact@example.com)
+
 
 ---
 
