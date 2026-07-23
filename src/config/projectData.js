@@ -9,7 +9,9 @@ export const PROJECTS = [
     tech: ['React', 'Three.js', 'GSAP', 'Tailwind CSS'],
     bg: ['#131210', '#1a1814'],
     line: '#c9a96e',
-    acc: '#c9a96e'
+    acc: '#c9a96e',
+    liveUrl: 'https://finwise-beta.figma.site',
+    repoUrl: null
   },
   {
     id: 'pcw2',
@@ -21,7 +23,9 @@ export const PROJECTS = [
     tech: ['React', 'Three.js', 'Web Audio API', 'Tailwind'],
     bg: ['#131210', '#1a1814'],
     line: '#c9a96e',
-    acc: '#c9a96e'
+    acc: '#c9a96e',
+    liveUrl: null,
+    repoUrl: null
   },
   {
     id: 'pcw3',
@@ -33,7 +37,9 @@ export const PROJECTS = [
     tech: ['React Native', 'Expo', 'Reanimated', 'Redux'],
     bg: ['#131210', '#1a1814'],
     line: '#c9a96e',
-    acc: '#c9a96e'
+    acc: '#c9a96e',
+    liveUrl: 'https://v0-personalized-workout-app-ecru.vercel.app/',
+    repoUrl: 'https://github.com/vikas0223/workout_planner'
   },
   {
     id: 'pcw4',
@@ -45,6 +51,8 @@ export const PROJECTS = [
     tech: ['React', 'Node.js', 'OpenAI API', 'Tailwind CSS'],
     bg: ['#131210', '#1a1814'],
     line: '#c9a96e',
-    acc: '#c9a96e'
+    acc: '#c9a96e',
+    liveUrl: 'https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/10/22/05/20251022050419-BKOM9IFN.json',
+    repoUrl: 'https://github.com/vikas0223/Mental-health-chatbot'
   },
 ];

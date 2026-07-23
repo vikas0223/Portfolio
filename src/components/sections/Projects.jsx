@@ -157,8 +157,41 @@ export default function Projects() {
                 </div>
 
                 <div className="project-ctas flex gap-4 opacity-0">
-                  <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:bg-[#d4b47a]">Live Preview</a>
-                  <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:border-gold hover:text-gold">View Code</a>
+                  {p.liveUrl ? (
+                    <a
+                      href={p.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center bg-gold text-d0 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:bg-[#d4b47a]"
+                    >
+                      Live Preview
+                    </a>
+                  ) : (
+                    <span
+                      className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center bg-gold/15 text-gold/40 border border-gold/20 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase cursor-not-allowed select-none"
+                      title="Coming Soon"
+                    >
+                      Live Preview (Coming Soon)
+                    </span>
+                  )}
+
+                  {p.repoUrl ? (
+                    <a
+                      href={p.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center border border-border rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase transition-all duration-250 hover:border-gold hover:text-gold"
+                    >
+                      View Code
+                    </a>
+                  ) : (
+                    <span
+                      className="py-[11px] px-6 min-h-[44px] inline-flex items-center justify-center border border-border/30 text-t-lo/40 rounded-[2px] font-mono text-[0.68rem] tracking-[0.18em] uppercase cursor-not-allowed select-none bg-white/[0.02]"
+                      title="Coming Soon"
+                    >
+                      View Code (Coming Soon)
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -234,12 +267,41 @@ export default function Projects() {
 
               {/* Stacked CTA Buttons on Mobile — Equal Prominence & 48px Min Target */}
               <div className="flex flex-col sm:flex-row gap-3 w-full">
-                <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="w-full min-h-[48px] py-3 flex items-center justify-center bg-gold text-d0 rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium active:scale-95 transition-transform hover:bg-[#d4b47a]">
-                  Live Preview
-                </a>
-                <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="w-full min-h-[48px] py-3 flex items-center justify-center border border-border/60 text-t-hi rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium bg-white/5 active:scale-95 transition-transform hover:border-gold hover:text-gold">
-                  View Code
-                </a>
+                {p.liveUrl ? (
+                  <a
+                    href={p.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full min-h-[48px] py-3 flex items-center justify-center bg-gold text-d0 rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium active:scale-95 transition-transform hover:bg-[#d4b47a]"
+                  >
+                    Live Preview
+                  </a>
+                ) : (
+                  <span
+                    className="w-full min-h-[48px] py-3 flex items-center justify-center bg-gold/15 text-gold/40 border border-gold/20 rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium cursor-not-allowed select-none"
+                    title="Coming Soon"
+                  >
+                    Live Preview (Coming Soon)
+                  </span>
+                )}
+
+                {p.repoUrl ? (
+                  <a
+                    href={p.repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full min-h-[48px] py-3 flex items-center justify-center border border-border/60 text-t-hi rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium bg-white/5 active:scale-95 transition-transform hover:border-gold hover:text-gold"
+                  >
+                    View Code
+                  </a>
+                ) : (
+                  <span
+                    className="w-full min-h-[48px] py-3 flex items-center justify-center border border-border/30 text-t-lo/40 rounded-[4px] font-mono text-[0.72rem] tracking-[0.18em] uppercase font-medium bg-white/[0.02] cursor-not-allowed select-none"
+                    title="Coming Soon"
+                  >
+                    View Code (Coming Soon)
+                  </span>
+                )}
               </div>
             </div>
 
