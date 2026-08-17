@@ -3,19 +3,31 @@ export const EDUCATION_HISTORY = [
     institution: 'Chandigarh University, Chandigarh',
     degree: 'B.E. Computer Science Engineering (AI & ML)',
     period: '2022 – 2026',
-    score: 'GPA 7.63'
+    score: 'GPA 7.63',
+    targetValue: 7.63,
+    prefix: 'GPA ',
+    suffix: '',
+    decimals: 2
   },
   {
     institution: 'G.M.S.S.S Civil Lines, Patiala',
     degree: 'Senior Secondary (12th)',
     period: '2021 – 2022',
-    score: '89%'
+    score: '89%',
+    targetValue: 89,
+    prefix: '',
+    suffix: '%',
+    decimals: 0
   },
   {
     institution: 'Aman Public School, Patiala',
     degree: 'Matriculation (10th)',
     period: '2019 – 2020',
-    score: '95%'
+    score: '95%',
+    targetValue: 95,
+    prefix: '',
+    suffix: '%',
+    decimals: 0
   }
 ];
 

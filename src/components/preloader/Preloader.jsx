@@ -68,62 +68,54 @@ export default function Preloader({ onComplete }) {
     });
     masterTimelineRef.current = tl;
 
-    // A. Greeting sequence (Namaste to Hello)
+    // A. Multilingual Greeting sequence (Hello, Namaste, Bonjour, Hola, Ciao, Olá)
     GREETINGS.forEach((greeting) => {
       tl.call(() => {
-        setCurrentText(greeting);
+        if (textRef.current) {
+          textRef.current.innerHTML = greeting;
+        }
       });
       tl.fromTo(textRef.current,
-        { opacity: 0, filter: 'blur(12px)', y: 15 },
-        { opacity: 1, filter: 'blur(0px)', y: 0, duration: 0.25, ease: 'power2.out' }
+        { opacity: 0, y: 14, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out' }
       );
-      tl.to({}, { duration: 0.25 }); // Short stay duration
+      tl.to({}, { duration: 0.24 }); // Short stay duration
       tl.to(textRef.current,
-        { opacity: 0, filter: 'blur(10px)', y: -10, duration: 0.2, ease: 'power2.in' }
+        { opacity: 0, y: -10, scale: 1.01, duration: 0.18, ease: 'power2.in' }
       );
     });
 
-    // B. Personal Welcome Message
-    // "Hello."
-    tl.call(() => {
-      setCurrentText('Hello.');
-    });
-    tl.fromTo(textRef.current,
-      { opacity: 0, filter: 'blur(12px)', y: 15 },
-      { opacity: 1, filter: 'blur(0px)', y: 0, duration: 0.22, ease: 'power2.out' }
-    );
-    tl.to({}, { duration: 0.28 });
-    tl.to(textRef.current,
-      { opacity: 0, filter: 'blur(10px)', y: -10, duration: 0.18, ease: 'power2.in' }
-    );
-
+    // B. Personal Welcome Message ("I'm Vikas Singh", "UI/UX Designer")
     // "I'm Vikas Singh"
     tl.call(() => {
-      setCurrentText('I\'m <span class="text-gold font-medium">Vikas Singh</span>');
+      if (textRef.current) {
+        textRef.current.innerHTML = 'I\'m <span class="text-gold font-medium">Vikas Singh</span>';
+      }
     });
     tl.fromTo(textRef.current,
-      { opacity: 0, filter: 'blur(12px)', y: 15 },
-      { opacity: 1, filter: 'blur(0px)', y: 0, duration: 0.32, ease: 'power2.out' }
+      { opacity: 0, y: 14, scale: 0.98 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.28, ease: 'power2.out' }
     );
-    tl.to({}, { duration: 0.55 }); // Pause
+    tl.to({}, { duration: 0.5 }); // Pause
     tl.to(textRef.current,
-      { opacity: 0, filter: 'blur(10px)', y: -10, duration: 0.2, ease: 'power2.in' }
+      { opacity: 0, y: -10, scale: 1.01, duration: 0.2, ease: 'power2.in' }
     );
 
     // "UI/UX Designer"
     tl.call(() => {
-      setCurrentText('UI/UX Designer');
+      if (textRef.current) {
+        textRef.current.innerHTML = 'UI/UX Designer';
+      }
     });
     tl.fromTo(textRef.current,
-      { opacity: 0, filter: 'blur(12px)', y: 15 },
-      { opacity: 1, filter: 'blur(0px)', y: 0, duration: 0.32, ease: 'power2.out' }
+      { opacity: 0, y: 14, scale: 0.98 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.28, ease: 'power2.out' }
     );
-    tl.to({}, { duration: 0.55 }); // Pause
+    tl.to({}, { duration: 0.5 }); // Pause
     
     // Animate exit of both greetings text and loader status indicator together
     tl.to([textRef.current, statusRef.current], {
       opacity: 0,
-      filter: 'blur(10px)',
       y: -10,
       duration: 0.22,
       ease: 'power2.in'

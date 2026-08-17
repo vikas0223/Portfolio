@@ -7,8 +7,8 @@ export default function GreetingSequence({ textRef, statusRef, statusMessage, cu
         <h1 
           ref={textRef} 
           className="font-serif text-[clamp(2.2rem,6vw,4.5rem)] text-t-hi tracking-normal leading-none font-light select-none"
-          style={{ opacity: 0, willChange: 'opacity, transform, filter' }}
-          dangerouslySetInnerHTML={{ __html: currentText }}
+          style={{ opacity: 0, willChange: 'opacity, transform' }}
+          dangerouslySetInnerHTML={{ __html: currentText || GREETINGS[0] || 'Hello.' }}
         />
       </div>
       

@@ -20,7 +20,7 @@ const C = {
 };
 
 /* ── CRT Monitor ── */
-function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false, isSubmitted = false, isHoveringSend = false, inView = false }) {
+function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false, isSubmitted = false, isError = false, isHoveringSend = false, inView = false }) {
   const screenMatRef = useRef();
   const bootTimeRef = useRef(-1);
   const subStartTimeRef = useRef(0);
@@ -31,6 +31,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
     phase: '',
     isSubmitted: false,
     isSubmitting: false,
+    isError: false,
     showCursor: false,
     progressVal: -1,
     subText: '',
@@ -39,15 +40,15 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
     bootStep: 0
   });
 
-  // Create a high-res canvas element and a Three.js texture
+  // Create a high-res 2048x1536 canvas element & texture with hardware mipmapping for crystal-clear text
   const [canvas, texture] = useMemo(() => {
     const c = document.createElement('canvas');
-    c.width = 1024;
-    c.height = 768;
+    c.width = 2048;
+    c.height = 1536;
     const t = new THREE.CanvasTexture(c);
+    t.generateMipmaps = true;
     t.minFilter = THREE.LinearMipmapLinearFilter;
     t.magFilter = THREE.LinearFilter;
-    t.generateMipmaps = true;
     t.anisotropy = 16; // Maximum crispness at angles
     t.wrapS = THREE.ClampToEdgeWrapping;
     t.wrapT = THREE.ClampToEdgeWrapping;
@@ -91,7 +92,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
       const hasInput = !!(formData.name || formData.email || formData.message || formData.company || formData.projectType);
 
       const blinkFreq = isHoveringSend ? 4 : 2;
-      const showCursor = phase === 'ready' && !isSubmitted && !isSubmitting && !hasInput && (Math.floor(t * blinkFreq) % 2 === 0);
+      const showCursor = phase === 'ready' && !isSubmitted && !isSubmitting && !isError && !hasInput && (Math.floor(t * blinkFreq) % 2 === 0);
 
       let elapsedSub = 0;
       let progressVal = -1;
@@ -111,7 +112,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
       }
 
       let cycle = -1;
-      if (phase === 'ready' && !isSubmitted && !isSubmitting && hasInput) {
+      if (phase === 'ready' && !isSubmitted && !isSubmitting && !isError && hasInput) {
         let filledCount = 0;
         if (formData.name) filledCount++;
         if (formData.email) filledCount++;
@@ -137,6 +138,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
         phase !== lastStateRef.current.phase ||
         isSubmitted !== lastStateRef.current.isSubmitted ||
         isSubmitting !== lastStateRef.current.isSubmitting ||
+        isError !== lastStateRef.current.isError ||
         showCursor !== lastStateRef.current.showCursor ||
         progressVal !== lastStateRef.current.progressVal ||
         subText !== lastStateRef.current.subText ||
@@ -150,6 +152,7 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
           phase,
           isSubmitted,
           isSubmitting,
+          isError,
           showCursor,
           progressVal,
           subText,
@@ -158,95 +161,112 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
           bootStep
         };
 
-        ctx.fillStyle = '#080a0f'; // darker background for better contrast
-        ctx.fillRect(0, 0, 1024, 768);
+        // Deep obsidian background for pitch-perfect contrast
+        ctx.fillStyle = '#040608';
+        ctx.fillRect(0, 0, 2048, 1536);
 
         if (phase === 'flash') {
-          ctx.fillStyle = '#fff';
-          ctx.fillRect(0, 380, 1024, 8);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 760, 2048, 16);
         } else if (phase === 'static') {
-          const imgData = ctx.createImageData(1024, 768);
+          const imgData = ctx.createImageData(2048, 1536);
           const d = imgData.data;
           for (let i = 0; i < d.length; i += 4) {
             const val = Math.random() > 0.5 ? 255 : 0;
             d[i] = val * 0.8;
             d[i + 1] = val * 0.75;
             d[i + 2] = val * 0.55;
-            d[i + 3] = 45; // slight opacity so background shows
+            d[i + 3] = 40; // subtle static opacity
           }
           ctx.putImageData(imgData, 0, 0);
         } else if (phase === 'booting') {
-          ctx.fillStyle = '#ffd580'; // brighter amber gold
-          ctx.font = 'bold 40px monospace';
-          ctx.fillText('VS WORKSTATION v2.1', 60, 100);
-          ctx.fillText('-----------------------------', 60, 160);
-          ctx.font = '36px monospace';
-          if (elapsedBoot > 0.2) ctx.fillText('SYSTEM INIT... OK', 60, 240);
-          if (elapsedBoot > 0.5) ctx.fillText('RAM CHECK: 640KB OK', 60, 320);
-          if (elapsedBoot > 0.8) ctx.fillText('ESTABLISHING LINK... OK', 60, 400);
-          if (elapsedBoot > 1.1) ctx.fillText('SYSTEM READY.', 60, 480);
+          ctx.fillStyle = '#ffe299'; // ultra bright gold amber
+          ctx.font = 'bold 120px Consolas, "Courier New", monospace';
+          ctx.fillText('VS WORKSTATION v2.1', 100, 180);
+          ctx.fillText('-----------------------------', 100, 310);
+          ctx.font = 'bold 105px Consolas, "Courier New", monospace';
+          if (elapsedBoot > 0.2) ctx.fillText('SYSTEM INIT... OK', 100, 470);
+          if (elapsedBoot > 0.5) ctx.fillText('RAM CHECK: 640KB OK', 100, 630);
+          if (elapsedBoot > 0.8) ctx.fillText('ESTABLISHING LINK... OK', 100, 790);
+          if (elapsedBoot > 1.1) ctx.fillText('SYSTEM READY.', 100, 950);
         } else if (phase === 'ready') {
-          // Draw Scanlines
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-          for (let y = 0; y < 768; y += 6) {
-            ctx.fillRect(0, y, 1024, 2);
+          // Draw subtle scanlines
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+          for (let y = 0; y < 1536; y += 12) {
+            ctx.fillRect(0, y, 2048, 4);
           }
 
-          ctx.font = 'bold 44px monospace';
           ctx.textBaseline = 'top';
 
           if (isSubmitted) {
             // Delivered Screen
-            ctx.fillStyle = '#52ff9e'; // bright vivid green
-            ctx.fillText('STATUS: DELIVERED ✓', 60, 100);
+            ctx.fillStyle = '#40ff99'; // vivid neon green
+            ctx.font = 'bold 128px Consolas, "Courier New", monospace';
+            ctx.fillText('STATUS: DELIVERED ✓', 100, 180);
 
-            ctx.fillStyle = '#ffd580';
-            ctx.font = '40px monospace';
-            ctx.fillText('=============================', 60, 170);
-            ctx.fillText('Message delivered.', 60, 260);
-            ctx.fillText('Connection secure.', 60, 350);
-            ctx.fillText('See you soon!', 60, 440);
-            ctx.fillText('-----------------------------', 60, 530);
-            ctx.fillText("Thanks! I'll get back soon.", 60, 620);
+            ctx.fillStyle = '#ffe299';
+            ctx.font = 'bold 108px Consolas, "Courier New", monospace';
+            ctx.fillText('=============================', 100, 330);
+            ctx.fillText('Message delivered.', 100, 510);
+            ctx.fillText('Connection secure.', 100, 690);
+            ctx.fillText('See you soon!', 100, 870);
+            ctx.fillText('-----------------------------', 100, 1050);
+            ctx.fillText("Thanks! I'll get back soon.", 100, 1230);
+          } else if (isError) {
+            // Error Screen
+            ctx.fillStyle = '#ff6666'; // bright coral red
+            ctx.font = 'bold 128px Consolas, "Courier New", monospace';
+            ctx.fillText('STATUS: ERROR ✗', 100, 180);
+
+            ctx.fillStyle = '#ffe299';
+            ctx.font = 'bold 108px Consolas, "Courier New", monospace';
+            ctx.fillText('=============================', 100, 330);
+            ctx.fillText('Transmission failed.', 100, 510);
+            ctx.fillText('Payload preserved in buffer.', 100, 690);
+            ctx.fillText('Connection error.', 100, 870);
+            ctx.fillText('-----------------------------', 100, 1050);
+            ctx.fillText('Please retry transmission.', 100, 1230);
           } else if (isSubmitting) {
             // Submitting sequences
-            ctx.fillStyle = '#ffd580';
+            ctx.fillStyle = '#ffe299';
+            ctx.font = 'bold 120px Consolas, "Courier New", monospace';
+            ctx.fillText('TRANSMITTING PAYLOAD...', 100, 180);
+            ctx.font = 'bold 108px Consolas, "Courier New", monospace';
+            ctx.fillText('=============================', 100, 330);
 
             let bar = '█'.repeat(progressVal) + '▒'.repeat(10 - progressVal);
-
-            ctx.fillText('TRANSMITTING PAYLOAD...', 60, 100);
-            ctx.font = '40px monospace';
-            ctx.fillText('=============================', 60, 170);
-
-            ctx.fillText(subText, 60, 280);
-            ctx.font = '48px monospace';
-            ctx.fillText(bar, 60, 380);
-            ctx.font = '40px monospace';
-            ctx.fillText(`${Math.round((progressVal / 10) * 100)}% COMPLETE`, 60, 480);
+            ctx.fillText(subText, 100, 540);
+            ctx.font = 'bold 120px Consolas, "Courier New", monospace';
+            ctx.fillText(bar, 100, 740);
+            ctx.font = 'bold 108px Consolas, "Courier New", monospace';
+            ctx.fillText(`${Math.round((progressVal / 10) * 100)}% COMPLETE`, 100, 960);
           } else {
             // Normal Idle or Typing
             if (!hasInput) {
               // Idle state
-              ctx.fillStyle = '#ffd580';
-              ctx.fillText('VS TERMINAL v2.1', 60, 100);
-              ctx.fillStyle = 'rgba(255, 213, 128, 0.4)';
-              ctx.fillText('=============================', 60, 170);
+              ctx.fillStyle = '#ffe299';
+              ctx.font = 'bold 124px Consolas, "Courier New", monospace';
+              ctx.fillText('VS TERMINAL v2.1', 100, 180);
+              ctx.fillStyle = '#e2c478';
+              ctx.fillText('=============================', 100, 330);
 
-              ctx.fillStyle = '#ffd580';
-              ctx.fillText('SYSTEM READY', 60, 260);
-              ctx.fillText('Waiting for incoming', 60, 350);
-              ctx.fillText('connection...', 60, 440);
+              ctx.fillStyle = '#ffe299';
+              ctx.font = 'bold 108px Consolas, "Courier New", monospace';
+              ctx.fillText('SYSTEM READY', 100, 510);
+              ctx.fillText('Waiting for incoming', 100, 690);
+              ctx.fillText('connection...', 100, 870);
 
               // Draw cursor
               if (showCursor) {
-                ctx.fillRect(60, 530, 28, 44);
+                ctx.fillRect(100, 1060, 68, 104);
               }
             } else {
               // Typing state
-              ctx.fillStyle = '#ffd580';
-              ctx.fillText('INCOMING CONNECTION...', 60, 100);
-              ctx.font = '36px monospace';
-              ctx.fillText('RECEIVING DATA...', 60, 160);
+              ctx.fillStyle = '#ffe299';
+              ctx.font = 'bold 124px Consolas, "Courier New", monospace';
+              ctx.fillText('INCOMING CONNECTION...', 100, 180);
+              ctx.font = 'bold 105px Consolas, "Courier New", monospace';
+              ctx.fillText('RECEIVING DATA...', 100, 310);
 
               // Progress bar based on fields filled
               let filledCount = 0;
@@ -262,21 +282,21 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
                 bar += (i === cycle) ? '█' : '▒';
               }
 
-              ctx.font = '44px monospace';
-              ctx.fillText(bar, 60, 240);
+              ctx.font = 'bold 120px Consolas, "Courier New", monospace';
+              ctx.fillText(bar, 100, 460);
 
               // Checklist verification
-              ctx.font = '40px monospace';
-              ctx.fillText('=============================', 60, 320);
+              ctx.font = 'bold 105px Consolas, "Courier New", monospace';
+              ctx.fillText('=============================', 100, 600);
 
-              ctx.fillStyle = formData.name ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
-              ctx.fillText(formData.name ? 'Identity Verified ✓' : 'Authenticating User...', 60, 400);
+              ctx.fillStyle = formData.name ? '#40ff99' : '#ffeaad';
+              ctx.fillText(formData.name ? 'Identity Verified ✓' : 'Authenticating User...', 100, 760);
 
-              ctx.fillStyle = formData.email ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
-              ctx.fillText(formData.email ? 'Connection Established ✓' : 'Securing Connection...', 60, 490);
+              ctx.fillStyle = formData.email ? '#40ff99' : '#ffeaad';
+              ctx.fillText(formData.email ? 'Connection Established ✓' : 'Securing Connection...', 100, 940);
 
-              ctx.fillStyle = formData.message ? '#52ff9e' : 'rgba(255, 213, 128, 0.4)';
-              ctx.fillText(formData.message ? 'Secure Channel Open ✓' : 'Opening Payload Channel...', 60, 580);
+              ctx.fillStyle = formData.message ? '#40ff99' : '#ffeaad';
+              ctx.fillText(formData.message ? 'Secure Channel Open ✓' : 'Opening Payload Channel...', 100, 1120);
             }
           }
         }
@@ -288,11 +308,11 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
     if (phase === 'off') {
       screenMatRef.current.emissiveIntensity = 0;
     } else {
-      let baseIntensity = 0.65 + Math.sin(t * 2) * 0.08;
+      let baseIntensity = 0.85 + Math.sin(t * 2) * 0.08;
 
       // Tiny random flicker
       if (Math.random() > 0.985) {
-        baseIntensity -= 0.2;
+        baseIntensity -= 0.15;
       } else if (Math.random() > 0.97) {
         baseIntensity += 0.06;
       }
@@ -309,9 +329,9 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
       if (isSubmitted) {
         const elapsedSubmit = t - submitTimeRef.current;
         if (elapsedSubmit > 0 && elapsedSubmit < 0.5) {
-          pulseDim = 1.6 - (elapsedSubmit / 0.5) * 0.8;
+          pulseDim = 1.4 - (elapsedSubmit / 0.5) * 0.6;
         } else {
-          pulseDim = 0.75;
+          pulseDim = 0.85;
         }
       }
 
@@ -336,12 +356,12 @@ function CRTMonitor({ position = [0, 0, 0], formData = {}, isSubmitting = false,
         <meshStandardMaterial
           ref={screenMatRef}
           color="#000000"
-          roughness={0.25}
-          metalness={0.1}
+          roughness={0.1}
+          metalness={0.0}
           map={texture}
           emissive="#ffffff"
           emissiveMap={texture}
-          emissiveIntensity={0.6}
+          emissiveIntensity={1.0}
           toneMapped={false}
         />
       </mesh>
@@ -530,7 +550,7 @@ function DeskItems({ position = [0, 0, 0] }) {
 }
 
 /* ── Full Desk Scene ── */
-function DeskScene({ formData, isSubmitting, isSubmitted, isHoveringSend, inView }) {
+function DeskScene({ formData, isSubmitting, isSubmitted, isError, isHoveringSend, inView }) {
   return (
     <group>
       {/* ── Desk ── */}
@@ -564,6 +584,7 @@ function DeskScene({ formData, isSubmitting, isSubmitted, isHoveringSend, inView
         formData={formData}
         isSubmitting={isSubmitting}
         isSubmitted={isSubmitted}
+        isError={isError}
         isHoveringSend={isHoveringSend}
         inView={inView}
       />
@@ -578,7 +599,7 @@ function DeskScene({ formData, isSubmitting, isSubmitted, isHoveringSend, inView
 }
 
 /* ── Scene Controller (mouse interaction) ── */
-function SceneController({ formData, isSubmitting, isSubmitted, isHoveringSend, inView }) {
+function SceneController({ formData, isSubmitting, isSubmitted, isError, isHoveringSend, inView }) {
   const { camera } = useThree();
   const groupRef = useRef();
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -634,6 +655,7 @@ function SceneController({ formData, isSubmitting, isSubmitted, isHoveringSend, 
           formData={formData}
           isSubmitting={isSubmitting}
           isSubmitted={isSubmitted}
+          isError={isError}
           isHoveringSend={isHoveringSend}
           inView={inView}
         />
@@ -645,7 +667,7 @@ function SceneController({ formData, isSubmitting, isSubmitted, isHoveringSend, 
 }
 
 /* ── Exported Canvas wrapper ── */
-export default function ContactModel({ formData, isSubmitting, isSubmitted, isHoveringSend, inView }) {
+export default function ContactModel({ formData, isSubmitting, isSubmitted, isError, isHoveringSend, inView }) {
   return (
     <Canvas
       camera={{ position: [3.1, 2.7, 4.0], fov: 31 }}
@@ -686,6 +708,7 @@ export default function ContactModel({ formData, isSubmitting, isSubmitted, isHo
           formData={formData}
           isSubmitting={isSubmitting}
           isSubmitted={isSubmitted}
+          isError={isError}
           isHoveringSend={isHoveringSend}
           inView={inView}
         />

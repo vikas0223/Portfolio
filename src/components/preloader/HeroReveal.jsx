@@ -52,11 +52,13 @@ export function animateHeroReveal(tl) {
     );
   }
 
+  const slinePos = isSecCtaVisible ? '-=0.5' : '-=0.25';
+
   // 6. Scroll indicator line & text reveal
   tl.fromTo('.sline', 
     { width: 0, opacity: 0 }, 
     { width: 42, opacity: 1, duration: 0.6, ease: 'power2.out' }, 
-    '-=0.5'
+    slinePos
   );
   tl.fromTo('.sline + span', 
     { x: -10, opacity: 0 }, 

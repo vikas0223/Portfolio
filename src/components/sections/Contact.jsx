@@ -3,6 +3,7 @@ import ContactModel from '../../three/ContactScene';
 import SectionGlow from '../ui/SectionGlow';
 import { ContactDoodles } from '../ui/DesignerDoodles';
 import { siteConfig } from '../../config/siteConfig';
+import { submitContactForm } from '../../services/contactService';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -18,6 +19,7 @@ export default function Contact() {
     message: ''
   });
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isHoveringSend, setIsHoveringSend] = useState(false);
@@ -83,6 +85,9 @@ export default function Contact() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (submitError) {
+      setSubmitError(null);
+    }
     playClickSound();
   };
 
@@ -103,17 +108,37 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting || isSubmitted) return;
     if (!validate()) return;
 
     setIsSubmitting(true);
+    setSubmitError(null);
 
-    // Simulate connection encryption and transmission payload sending
-    setTimeout(() => {
+    const startTime = Date.now();
+
+    try {
+      const result = await submitContactForm(formData);
+
+      // Ensure minimum CRT animation timing (~1.8s) for smooth transmission sequence
+      const elapsedTime = Date.now() - startTime;
+      const minAnimationTime = 1800;
+      if (elapsedTime < minAnimationTime) {
+        await new Promise(res => setTimeout(res, minAnimationTime - elapsedTime));
+      }
+
       setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 2800);
+
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        setSubmitError(result.error || 'Form submission failed. Please try again.');
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      setSubmitError('An unexpected error occurred. Please try again.');
+    }
   };
 
   const handleReset = () => {
@@ -125,6 +150,7 @@ export default function Contact() {
       message: ''
     });
     setErrors({});
+    setSubmitError(null);
     setIsSubmitted(false);
     setIsSubmitting(false);
   };
@@ -321,6 +347,22 @@ export default function Contact() {
 
             {/* Submit Button & Sound controls */}
             <div className="pt-2 flex flex-col gap-3">
+              {submitError && (
+                <div className="p-3 bg-red-950/40 border border-red-500/40 rounded-xl text-red-300 font-mono text-[0.72rem] tracking-wider flex items-center justify-between animate-[fadeIn_0.2s_ease-out]">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-400 font-bold">⚠️</span>
+                    <span>{submitError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSubmitError(null)}
+                    className="text-red-400/60 hover:text-red-200 transition-colors ml-2 font-sans text-xs px-1"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={isSubmitting || isSubmitted}
@@ -339,7 +381,7 @@ export default function Contact() {
                   <span>Sending...</span>
                 ) : (
                   <>
-                    <span>Let's build something</span>
+                    <span>{submitError ? 'Retry Submission' : "Let's build something"}</span>
                     <span className="transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span>
                   </>
                 )}
@@ -387,6 +429,7 @@ export default function Contact() {
               formData={formData}
               isSubmitting={isSubmitting}
               isSubmitted={isSubmitted}
+              isError={!!submitError}
               isHoveringSend={isHoveringSend}
               inView={inView}
             />
